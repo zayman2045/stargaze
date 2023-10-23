@@ -1,13 +1,16 @@
 use bevy::{prelude::*, window::PrimaryWindow};
+use rand::prelude::*;
 
 pub const PLAYER_SIZE: f32 = 100.0; // Player sprite size
 pub const PLAYER_SPEED: f32 = 500.0; // Player movement speed
+pub const NUMBER_OF_ASTEROIDS: usize = 4; // Number of asteroids to spawn;
 
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
-        .add_startup_system(spawn_player)
         .add_startup_system(spawn_camera)
+        .add_startup_system(spawn_player)
+        .add_startup_system(spawn_asteroids)
         .add_system(player_movement)
         .add_system(confine_player_movement)
         .run()
@@ -15,6 +18,9 @@ fn main() {
 
 #[derive(Component)]
 pub struct Player {}
+
+#[derive(Component)]
+pub struct Asteroid {}
 
 // Spawn the player sprite in the middle of the screen
 pub fn spawn_player(
@@ -42,6 +48,28 @@ pub fn spawn_camera(mut commands: Commands, window_query: Query<&Window, With<Pr
         transform: Transform::from_xyz(window.width() / 2.0, window.height() / 2.0, 0.0),
         ..default()
     });
+}
+
+pub fn spawn_asteroids(
+    mut commands: Commands,
+    window_query: Query<&Window, With<PrimaryWindow>>,
+    asset_server: Res<AssetServer>,
+) {
+    let window = window_query.get_single().unwrap();
+
+    for _ in 0..NUMBER_OF_ASTEROIDS {
+        let random_x = random::<f32>() * window.width();
+        let random_y = random::<f32>() * window.height();
+
+        commands.spawn((
+            SpriteBundle {
+                transform: Transform::from_xyz(random_x, random_y, 0.0),
+                texture: asset_server.load("sprites/meteorBrown_big1.png"),
+                ..default()
+            },
+            Asteroid {},
+        ));
+    }
 }
 
 // Move the player sprite based on keyboard input
