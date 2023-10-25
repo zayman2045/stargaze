@@ -1,9 +1,11 @@
 use bevy::{prelude::*, window::PrimaryWindow};
 use rand::prelude::*;
 
-pub const PLAYER_SIZE: f32 = 100.0; // Player sprite size
-pub const PLAYER_SPEED: f32 = 500.0; // Player movement speed
-pub const NUMBER_OF_ASTEROIDS: usize = 4; // Number of asteroids to spawn;
+pub const PLAYER_SIZE: f32 = 100.0;
+pub const PLAYER_SPEED: f32 = 500.0;
+pub const NUMBER_OF_ASTEROIDS: usize = 4;
+pub const ASTEROID_SIZE: f32 = 100.0;
+pub const ASTEROID_SPEED: f32 = 200.0;
 
 fn main() {
     App::new()
@@ -13,6 +15,8 @@ fn main() {
         .add_startup_system(spawn_asteroids)
         .add_system(player_movement)
         .add_system(confine_player_movement)
+        .add_system(astroid_movement)
+        .add_system(update_astroid_direction)
         .run()
 }
 
@@ -20,7 +24,9 @@ fn main() {
 pub struct Player {}
 
 #[derive(Component)]
-pub struct Asteroid {}
+pub struct Asteroid {
+    pub direction: Vec2,
+}
 
 // Spawn the player sprite in the middle of the screen
 pub fn spawn_player(
@@ -67,7 +73,9 @@ pub fn spawn_asteroids(
                 texture: asset_server.load("sprites/meteorBrown_big1.png"),
                 ..default()
             },
-            Asteroid {},
+            Asteroid {
+                direction: Vec2::new(random::<f32>(), random::<f32>()).normalize(),
+            },
         ));
     }
 }
@@ -130,5 +138,36 @@ pub fn confine_player_movement(
         }
 
         player_transform.translation = translation;
+    }
+}
+
+pub fn astroid_movement(mut astroid_query: Query<(&mut Transform, &Asteroid)>, time: Res<Time>) {
+    for (mut transform, astroid) in astroid_query.iter_mut() {
+        let direction = Vec3::new(astroid.direction.x, astroid.direction.y, 0.0);
+        transform.translation += direction * ASTEROID_SPEED * time.delta_seconds();
+    }
+}
+
+pub fn update_astroid_direction(
+    mut astroid_query: Query<(&Transform, &mut Asteroid)>,
+    window_query: Query<&Window, With<PrimaryWindow>>,
+) {
+    let window = window_query.get_single().unwrap();
+
+    let half_astroid_size = ASTEROID_SIZE / 2.0;
+    let min_x = half_astroid_size;
+    let max_x = window.width() - half_astroid_size;
+    let min_y = half_astroid_size;
+    let max_y = window.height() - half_astroid_size;
+
+    for (transform, mut astroid) in astroid_query.iter_mut() {
+        let translation = transform.translation;
+
+        if translation.x < min_x || translation.x > max_x {
+            astroid.direction.x *= -1.0;
+        }
+        if translation.y < min_y || translation.y > max_y {
+            astroid.direction.y *= -1.0;
+        }
     }
 }
