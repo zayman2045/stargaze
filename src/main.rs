@@ -1,4 +1,4 @@
-use bevy::{prelude::*, window::PrimaryWindow, render::view::window};
+use bevy::{prelude::*, window::PrimaryWindow};
 use rand::prelude::*;
 
 pub const PLAYER_SIZE: f32 = 100.0;
@@ -57,6 +57,7 @@ pub fn spawn_camera(mut commands: Commands, window_query: Query<&Window, With<Pr
     });
 }
 
+// Spawn the asteroids in random locations
 pub fn spawn_asteroids(
     mut commands: Commands,
     window_query: Query<&Window, With<PrimaryWindow>>,
@@ -87,7 +88,7 @@ pub fn player_movement(
     mut player_query: Query<&mut Transform, With<Player>>,
     time: Res<Time>,
 ) {
-    if let Ok(mut transform) = player_query.get_single_mut() {
+    if let Ok(mut player_transform) = player_query.get_single_mut() {
         let mut direction = Vec3::ZERO;
 
         if keyboard_input.pressed(KeyCode::Left) || keyboard_input.pressed(KeyCode::A) {
@@ -107,10 +108,11 @@ pub fn player_movement(
             direction = direction.normalize();
         }
 
-        transform.translation += direction * PLAYER_SPEED * time.delta_seconds();
+        player_transform.translation += direction * PLAYER_SPEED * time.delta_seconds();
     }
 }
 
+// Confine the player sprite to the screen
 pub fn confine_player_movement(
     mut player_query: Query<&mut Transform, With<Player>>,
     window_query: Query<&Window, With<PrimaryWindow>>,
@@ -142,16 +144,20 @@ pub fn confine_player_movement(
     }
 }
 
+// Move the asteroids based on their direction
 pub fn astroid_movement(mut astroid_query: Query<(&mut Transform, &Asteroid)>, time: Res<Time>) {
-    for (mut transform, astroid) in astroid_query.iter_mut() {
+    for (mut astroid_transform, astroid) in astroid_query.iter_mut() {
         let direction = Vec3::new(astroid.direction.x, astroid.direction.y, 0.0);
-        transform.translation += direction * ASTEROID_SPEED * time.delta_seconds();
+        astroid_transform.translation += direction * ASTEROID_SPEED * time.delta_seconds();
     }
 }
 
+// Reverse the direction of the asteroid if it hits the edge of the screen
 pub fn update_astroid_direction(
     mut astroid_query: Query<(&Transform, &mut Asteroid)>,
     window_query: Query<&Window, With<PrimaryWindow>>,
+    audio: Res<Audio>,
+    asset_server: Res<AssetServer>,
 ) {
     let window = window_query.get_single().unwrap();
 
@@ -161,19 +167,38 @@ pub fn update_astroid_direction(
     let y_min = half_astroid_size;
     let y_max = window.height() - half_astroid_size;
 
-    for (transform, mut astroid) in astroid_query.iter_mut() {
-        let translation = transform.translation;
+    for (astroid_transform, mut astroid) in astroid_query.iter_mut() {
+        let mut direction_changed = false;
+
+        let translation = astroid_transform.translation;
 
         if translation.x < x_min || translation.x > x_max {
             astroid.direction.x *= -1.0;
+            direction_changed = true;
         }
         if translation.y < y_min || translation.y > y_max {
             astroid.direction.y *= -1.0;
+            direction_changed = true;
+        }
+
+        // Play a sound when the asteroid changes direction
+        if direction_changed {
+            let sound_effect_1 = asset_server.load("audio/impactSoft_heavy_000.ogg");
+            let sound_effect_2 = asset_server.load("audio/impactSoft_heavy_001.ogg");
+
+            let sound_effect = if random::<f32>() > 0.5 {
+                sound_effect_1
+            } else {
+                sound_effect_2
+            };
+
+            audio.play(sound_effect);
         }
     }
 }
 
-pub fn confine_astroid_movement (
+// Confine the asteroids to the screen
+pub fn confine_astroid_movement(
     mut astroid_query: Query<&mut Transform, With<Asteroid>>,
     window_query: Query<&Window, With<PrimaryWindow>>,
 ) {
@@ -185,10 +210,9 @@ pub fn confine_astroid_movement (
     let y_min = half_astroid_size;
     let y_max = window.height() - half_astroid_size;
 
-    for mut transform in astroid_query.iter_mut() {
-        let mut translation = transform.translation;
+    for mut astroid_transform in astroid_query.iter_mut() {
+        let mut translation = astroid_transform.translation;
 
-        // Confine the astroid to the screen
         if translation.x < x_min {
             translation.x = x_min;
         } else if translation.x > x_max {
@@ -201,6 +225,6 @@ pub fn confine_astroid_movement (
             translation.y = y_max;
         }
 
-        transform.translation = translation;
+        astroid_transform.translation = translation;
     }
 }
