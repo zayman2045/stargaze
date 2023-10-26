@@ -15,9 +15,10 @@ fn main() {
         .add_startup_system(spawn_asteroids)
         .add_system(player_movement)
         .add_system(confine_player_movement)
-        .add_system(astroid_movement)
-        .add_system(update_astroid_direction)
-        .add_system(confine_astroid_movement)
+        .add_system(asteroid_movement)
+        .add_system(update_asteroid_direction)
+        .add_system(confine_asteroid_movement)
+        .add_system(asteroid_hit_player)
         .run()
 }
 
@@ -120,11 +121,11 @@ pub fn confine_player_movement(
     if let Ok(mut player_transform) = player_query.get_single_mut() {
         let window = window_query.get_single().unwrap();
 
-        let half_player_size = PLAYER_SIZE / 2.0; // 32.0
-        let x_min = half_player_size;
-        let x_max = window.width() - half_player_size;
-        let y_min = half_player_size;
-        let y_max = window.height() - half_player_size;
+        let player_radius = PLAYER_SIZE / 2.0; // 32.0
+        let x_min = player_radius;
+        let x_max = window.width() - player_radius;
+        let y_min = player_radius;
+        let y_max = window.height() - player_radius;
 
         let mut translation = player_transform.translation;
 
@@ -145,39 +146,39 @@ pub fn confine_player_movement(
 }
 
 // Move the asteroids based on their direction
-pub fn astroid_movement(mut astroid_query: Query<(&mut Transform, &Asteroid)>, time: Res<Time>) {
-    for (mut astroid_transform, astroid) in astroid_query.iter_mut() {
-        let direction = Vec3::new(astroid.direction.x, astroid.direction.y, 0.0);
-        astroid_transform.translation += direction * ASTEROID_SPEED * time.delta_seconds();
+pub fn asteroid_movement(mut asteroid_query: Query<(&mut Transform, &Asteroid)>, time: Res<Time>) {
+    for (mut asteroid_transform, asteroid) in asteroid_query.iter_mut() {
+        let direction = Vec3::new(asteroid.direction.x, asteroid.direction.y, 0.0);
+        asteroid_transform.translation += direction * ASTEROID_SPEED * time.delta_seconds();
     }
 }
 
 // Reverse the direction of the asteroid if it hits the edge of the screen
-pub fn update_astroid_direction(
-    mut astroid_query: Query<(&Transform, &mut Asteroid)>,
+pub fn update_asteroid_direction(
+    mut asteroid_query: Query<(&Transform, &mut Asteroid)>,
     window_query: Query<&Window, With<PrimaryWindow>>,
     audio: Res<Audio>,
     asset_server: Res<AssetServer>,
 ) {
     let window = window_query.get_single().unwrap();
 
-    let half_astroid_size = ASTEROID_SIZE / 2.0;
-    let x_min = half_astroid_size;
-    let x_max = window.width() - half_astroid_size;
-    let y_min = half_astroid_size;
-    let y_max = window.height() - half_astroid_size;
+    let asteroid_radius = ASTEROID_SIZE / 2.0;
+    let x_min = asteroid_radius;
+    let x_max = window.width() - asteroid_radius;
+    let y_min = asteroid_radius;
+    let y_max = window.height() - asteroid_radius;
 
-    for (astroid_transform, mut astroid) in astroid_query.iter_mut() {
+    for (asteroid_transform, mut asteroid) in asteroid_query.iter_mut() {
         let mut direction_changed = false;
 
-        let translation = astroid_transform.translation;
+        let translation = asteroid_transform.translation;
 
         if translation.x < x_min || translation.x > x_max {
-            astroid.direction.x *= -1.0;
+            asteroid.direction.x *= -1.0;
             direction_changed = true;
         }
         if translation.y < y_min || translation.y > y_max {
-            astroid.direction.y *= -1.0;
+            asteroid.direction.y *= -1.0;
             direction_changed = true;
         }
 
@@ -198,20 +199,20 @@ pub fn update_astroid_direction(
 }
 
 // Confine the asteroids to the screen
-pub fn confine_astroid_movement(
-    mut astroid_query: Query<&mut Transform, With<Asteroid>>,
+pub fn confine_asteroid_movement(
+    mut asteroid_query: Query<&mut Transform, With<Asteroid>>,
     window_query: Query<&Window, With<PrimaryWindow>>,
 ) {
     let window = window_query.get_single().unwrap();
 
-    let half_astroid_size = ASTEROID_SIZE / 2.0;
-    let x_min = half_astroid_size;
-    let x_max = window.width() - half_astroid_size;
-    let y_min = half_astroid_size;
-    let y_max = window.height() - half_astroid_size;
+    let asteroid_radius = ASTEROID_SIZE / 2.0;
+    let x_min = asteroid_radius;
+    let x_max = window.width() - asteroid_radius;
+    let y_min = asteroid_radius;
+    let y_max = window.height() - asteroid_radius;
 
-    for mut astroid_transform in astroid_query.iter_mut() {
-        let mut translation = astroid_transform.translation;
+    for mut asteroid_transform in asteroid_query.iter_mut() {
+        let mut translation = asteroid_transform.translation;
 
         if translation.x < x_min {
             translation.x = x_min;
@@ -225,6 +226,31 @@ pub fn confine_astroid_movement(
             translation.y = y_max;
         }
 
-        astroid_transform.translation = translation;
+        asteroid_transform.translation = translation;
+    }
+}
+
+// Destroy the player if it collides with an asteroid
+pub fn asteroid_hit_player(
+    mut commands: Commands,
+    mut player_query: Query<(Entity, &Transform), With<Player>>,
+    asteroid_query: Query<&Transform, With<Asteroid>>,
+    asset_server: Res<AssetServer>,
+    audio: Res<Audio>,
+) {
+    if let Ok((player_entity, player_transform)) = player_query.get_single_mut() {
+        for asteroid_transform in asteroid_query.iter() {
+            let distance = player_transform
+                .translation
+                .distance(asteroid_transform.translation);
+            let player_radius = PLAYER_SIZE / 2.0;
+            let asteroid_radius = ASTEROID_SIZE / 2.0;
+            if distance < player_radius + asteroid_radius {
+                println!("Player Destroyed!");
+                let sound_effect = asset_server.load("audio/explosionCrunch_000.ogg");
+                audio.play(sound_effect);
+                commands.entity(player_entity).despawn();
+            }
+        }
     }
 }
