@@ -1,4 +1,4 @@
-use bevy::{prelude::*, window::PrimaryWindow};
+use bevy::{prelude::*, window::PrimaryWindow, render::view::window};
 use rand::prelude::*;
 
 pub const PLAYER_SIZE: f32 = 100.0;
@@ -17,6 +17,7 @@ fn main() {
         .add_system(confine_player_movement)
         .add_system(astroid_movement)
         .add_system(update_astroid_direction)
+        .add_system(confine_astroid_movement)
         .run()
 }
 
@@ -155,19 +156,51 @@ pub fn update_astroid_direction(
     let window = window_query.get_single().unwrap();
 
     let half_astroid_size = ASTEROID_SIZE / 2.0;
-    let min_x = half_astroid_size;
-    let max_x = window.width() - half_astroid_size;
-    let min_y = half_astroid_size;
-    let max_y = window.height() - half_astroid_size;
+    let x_min = half_astroid_size;
+    let x_max = window.width() - half_astroid_size;
+    let y_min = half_astroid_size;
+    let y_max = window.height() - half_astroid_size;
 
     for (transform, mut astroid) in astroid_query.iter_mut() {
         let translation = transform.translation;
 
-        if translation.x < min_x || translation.x > max_x {
+        if translation.x < x_min || translation.x > x_max {
             astroid.direction.x *= -1.0;
         }
-        if translation.y < min_y || translation.y > max_y {
+        if translation.y < y_min || translation.y > y_max {
             astroid.direction.y *= -1.0;
         }
+    }
+}
+
+pub fn confine_astroid_movement (
+    mut astroid_query: Query<&mut Transform, With<Asteroid>>,
+    window_query: Query<&Window, With<PrimaryWindow>>,
+) {
+    let window = window_query.get_single().unwrap();
+
+    let half_astroid_size = ASTEROID_SIZE / 2.0;
+    let x_min = half_astroid_size;
+    let x_max = window.width() - half_astroid_size;
+    let y_min = half_astroid_size;
+    let y_max = window.height() - half_astroid_size;
+
+    for mut transform in astroid_query.iter_mut() {
+        let mut translation = transform.translation;
+
+        // Confine the astroid to the screen
+        if translation.x < x_min {
+            translation.x = x_min;
+        } else if translation.x > x_max {
+            translation.x = x_max;
+        }
+
+        if translation.y < y_min {
+            translation.y = y_min;
+        } else if translation.y > y_max {
+            translation.y = y_max;
+        }
+
+        transform.translation = translation;
     }
 }
