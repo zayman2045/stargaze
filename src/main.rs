@@ -19,6 +19,7 @@ fn main() {
         .add_system(update_asteroid_direction)
         .add_system(confine_asteroid_movement)
         .add_system(asteroid_hit_player)
+        .add_system(asteroid_hit_asteroid)
         .run()
 }
 
@@ -251,6 +252,27 @@ pub fn asteroid_hit_player(
                 audio.play(sound_effect);
                 commands.entity(player_entity).despawn();
             }
+        }
+    }
+}
+
+// Reverse the direction of the asteroids if they collide with each other
+pub fn asteroid_hit_asteroid(mut asteroid_query: Query<(&Transform, &mut Asteroid)>) {
+    let mut combinations = asteroid_query.iter_combinations_mut();
+
+    while let Some(
+        [(asteroid_transform_1, mut asteroid_1), (asteroid_transform_2, mut asteroid_2)],
+    ) = combinations.fetch_next()
+    {
+        let distance = asteroid_transform_1
+            .translation
+            .distance(asteroid_transform_2.translation);
+        let asteroid_radius = ASTEROID_SIZE / 2.0;
+        if distance < asteroid_radius * 2.0 {
+            asteroid_1.direction.x *= -1.0;
+            asteroid_1.direction.y *= -1.0;
+            asteroid_2.direction.x *= -1.0;
+            asteroid_2.direction.y *= -1.0;
         }
     }
 }
