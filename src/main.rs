@@ -6,6 +6,7 @@ pub const PLAYER_SPEED: f32 = 500.0;
 pub const NUMBER_OF_ASTEROIDS: usize = 4;
 pub const ASTEROID_SIZE: f32 = 100.0;
 pub const ASTEROID_SPEED: f32 = 200.0;
+pub const NUMBER_OF_STARS: usize = 10;
 
 fn main() {
     App::new()
@@ -13,6 +14,7 @@ fn main() {
         .add_startup_system(spawn_camera)
         .add_startup_system(spawn_player)
         .add_startup_system(spawn_asteroids)
+        .add_startup_system(spawn_stars)
         .add_system(player_movement)
         .add_system(confine_player_movement)
         .add_system(asteroid_movement)
@@ -20,6 +22,7 @@ fn main() {
         .add_system(confine_asteroid_movement)
         .add_system(asteroid_hit_player)
         .add_system(asteroid_hit_asteroid)
+        .add_system(player_collect_star)
         .run()
 }
 
@@ -31,6 +34,9 @@ pub struct Asteroid {
     pub direction: Vec2,
 }
 
+#[derive(Component)]
+pub struct Star {}
+
 // Spawn the player sprite in the middle of the screen
 pub fn spawn_player(
     mut commands: Commands,
@@ -39,6 +45,7 @@ pub fn spawn_player(
 ) {
     let window = window_query.get_single().unwrap();
 
+    // Create a new entity with the SpriteBundle and Player components
     commands.spawn((
         SpriteBundle {
             transform: Transform::from_xyz(window.width() / 2.0, window.height() / 2.0, 0.0),
@@ -71,6 +78,7 @@ pub fn spawn_asteroids(
         let random_x = random::<f32>() * window.width();
         let random_y = random::<f32>() * window.height();
 
+        // Create a new entity with the SpriteBundle and Asteroid components
         commands.spawn((
             SpriteBundle {
                 transform: Transform::from_xyz(random_x, random_y, 0.0),
@@ -78,8 +86,31 @@ pub fn spawn_asteroids(
                 ..default()
             },
             Asteroid {
+                // Generate a random direction for the asteroid
                 direction: Vec2::new(random::<f32>(), random::<f32>()).normalize(),
             },
+        ));
+    }
+}
+
+pub fn spawn_stars(
+    mut commands: Commands,
+    window_query: Query<&Window, With<PrimaryWindow>>,
+    asset_server: Res<AssetServer>,
+) {
+    let window = window_query.get_single().unwrap();
+
+    for _ in 0..NUMBER_OF_STARS {
+        let random_x = random::<f32>() * window.width();
+        let random_y = random::<f32>() * window.height();
+
+        commands.spawn((
+            SpriteBundle {
+                transform: Transform::from_xyz(random_x, random_y, 0.0),
+                texture: asset_server.load("sprites/star_gold.png"),
+                ..default()
+            },
+            Star {},
         ));
     }
 }
@@ -106,6 +137,7 @@ pub fn player_movement(
             direction += Vec3::new(0.0, -1.0, 0.0)
         }
 
+        // Normalize the direction vector so that diagonal movement isn't faster
         if direction.length() > 0.0 {
             direction = direction.normalize();
         }
@@ -273,6 +305,30 @@ pub fn asteroid_hit_asteroid(mut asteroid_query: Query<(&Transform, &mut Asteroi
             asteroid_1.direction.y *= -1.0;
             asteroid_2.direction.x *= -1.0;
             asteroid_2.direction.y *= -1.0;
+        }
+    }
+}
+
+pub fn player_collect_star(
+    mut commands: Commands,
+    player_query: Query<&Transform, With<Player>>,
+    mut star_query: Query<(Entity, &Transform), With<Star>>,
+    asset_server: Res<AssetServer>,
+    audio: Res<Audio>,
+) {
+    if let Ok(player_transform) = player_query.get_single() {
+        for (star_entity, star_transform) in star_query.iter_mut() {
+            let distance = player_transform
+                .translation
+                .distance(star_transform.translation);
+            let player_radius = PLAYER_SIZE / 2.0;
+            let star_radius = ASTEROID_SIZE / 2.0;
+            if distance < player_radius + star_radius {
+                println!("Player Collected Star!");
+                let sound_effect = asset_server.load("audio/confirmation_001.ogg");
+                audio.play(sound_effect);
+                commands.entity(star_entity).despawn();
+            }
         }
     }
 }
