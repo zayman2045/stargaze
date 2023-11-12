@@ -6,12 +6,17 @@ pub const PLAYER_SPEED: f32 = 500.0;
 pub const NUMBER_OF_ASTEROIDS: usize = 4;
 pub const ASTEROID_SIZE: f32 = 100.0;
 pub const ASTEROID_SPEED: f32 = 200.0;
+pub const ASTEROID_SPAWN_TIME: f32 = 5.0;
 pub const NUMBER_OF_STARS: usize = 10;
 pub const STAR_SIZE: f32 = 30.0;
+pub const STAR_SPAWN_TIME: f32 = 1.0;
 
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
+        .init_resource::<Score>()
+        .init_resource::<StarSpawnTimer>()
+        .init_resource::<AsteroidSpawnTimer>()
         .add_startup_system(spawn_camera)
         .add_startup_system(spawn_player)
         .add_startup_system(spawn_asteroids)
@@ -24,6 +29,11 @@ fn main() {
         .add_system(asteroid_hit_player)
         .add_system(asteroid_hit_asteroid)
         .add_system(player_collect_star)
+        .add_system(update_score)
+        .add_system(tick_star_spwan_timer)
+        .add_system(spawn_stars_over_time)
+        .add_system(tick_asteroid_spwan_timer)
+        .add_system(spawn_asteroids_over_time)
         .run()
 }
 
@@ -37,6 +47,43 @@ pub struct Asteroid {
 
 #[derive(Component)]
 pub struct Star {}
+
+#[derive(Resource)]
+pub struct Score {
+    pub value: u32,
+}
+
+impl Default for Score {
+    fn default() -> Score {
+        Score { value: 0 }
+    }
+}
+
+#[derive(Resource)]
+pub struct StarSpawnTimer {
+    pub timer: Timer,
+}
+
+impl Default for StarSpawnTimer {
+    fn default() -> StarSpawnTimer {
+        StarSpawnTimer {
+            timer: Timer::from_seconds(STAR_SPAWN_TIME, TimerMode::Repeating),
+        }
+    }
+}
+
+#[derive(Resource)]
+pub struct AsteroidSpawnTimer {
+    pub timer: Timer,
+}
+
+impl Default for AsteroidSpawnTimer {
+    fn default() -> AsteroidSpawnTimer {
+        AsteroidSpawnTimer {
+            timer: Timer::from_seconds(ASTEROID_SPAWN_TIME, TimerMode::Repeating),
+        }
+    }
+}
 
 // Spawn the player sprite in the middle of the screen
 pub fn spawn_player(
@@ -267,12 +314,12 @@ pub fn confine_asteroid_movement(
 // Destroy the player if it collides with an asteroid
 pub fn asteroid_hit_player(
     mut commands: Commands,
-    mut player_query: Query<(Entity, &Transform), With<Player>>,
+    player_query: Query<(Entity, &Transform), With<Player>>,
     asteroid_query: Query<&Transform, With<Asteroid>>,
     asset_server: Res<AssetServer>,
     audio: Res<Audio>,
 ) {
-    if let Ok((player_entity, player_transform)) = player_query.get_single_mut() {
+    if let Ok((player_entity, player_transform)) = player_query.get_single() {
         for asteroid_transform in asteroid_query.iter() {
             let distance = player_transform
                 .translation
@@ -313,12 +360,13 @@ pub fn asteroid_hit_asteroid(mut asteroid_query: Query<(&Transform, &mut Asteroi
 pub fn player_collect_star(
     mut commands: Commands,
     player_query: Query<&Transform, With<Player>>,
-    mut star_query: Query<(Entity, &Transform), With<Star>>,
+    star_query: Query<(Entity, &Transform), With<Star>>,
     asset_server: Res<AssetServer>,
     audio: Res<Audio>,
+    mut score: ResMut<Score>,
 ) {
     if let Ok(player_transform) = player_query.get_single() {
-        for (star_entity, star_transform) in star_query.iter_mut() {
+        for (star_entity, star_transform) in star_query.iter() {
             let distance = player_transform
                 .translation
                 .distance(star_transform.translation);
@@ -326,10 +374,77 @@ pub fn player_collect_star(
             let star_radius = STAR_SIZE / 2.0;
             if distance < player_radius + star_radius {
                 println!("Player Collected Star!");
+                score.value += 1;
                 let sound_effect = asset_server.load("audio/confirmation_001.ogg");
                 audio.play(sound_effect);
                 commands.entity(star_entity).despawn();
             }
         }
+    }
+}
+
+pub fn update_score(score: Res<Score>) {
+    if score.is_changed() {
+        println!("Score: {}", score.value.to_string());
+    }
+}
+
+pub fn tick_star_spwan_timer(mut star_spawn_timer: ResMut<StarSpawnTimer>, time: Res<Time>) {
+    star_spawn_timer.timer.tick(time.delta());
+}
+
+// Spawn a star if the timer has finished
+pub fn spawn_stars_over_time(
+    mut commands: Commands,
+    star_spawn_timer: Res<StarSpawnTimer>,
+    window_query: Query<&Window, With<PrimaryWindow>>,
+    asset_server: Res<AssetServer>,
+) {
+    if star_spawn_timer.timer.finished() {
+        let window = window_query.get_single().unwrap();
+
+        let random_x = random::<f32>() * window.width();
+        let random_y = random::<f32>() * window.height();
+
+        commands.spawn((
+            SpriteBundle {
+                transform: Transform::from_xyz(random_x, random_y, 0.0),
+                texture: asset_server.load("sprites/star_gold.png"),
+                ..default()
+            },
+            Star {},
+        ));
+    }
+}
+
+pub fn tick_asteroid_spwan_timer(mut asteroid_spawn_timer: ResMut<AsteroidSpawnTimer>, time: Res<Time>) {
+    asteroid_spawn_timer.timer.tick(time.delta());
+}
+
+// Spawn an asteroid if the timer has finished
+pub fn spawn_asteroids_over_time(
+    mut commands: Commands,
+    asteroid_spawn_timer: Res<AsteroidSpawnTimer>,
+    window_query: Query<&Window, With<PrimaryWindow>>,
+    asset_server: Res<AssetServer>,
+) {
+    if asteroid_spawn_timer.timer.finished() {
+        let window = window_query.get_single().unwrap();
+
+        let random_x = random::<f32>() * window.width();
+        let random_y = random::<f32>() * window.height();
+
+        // Create a new entity with the SpriteBundle and Asteroid components
+        commands.spawn((
+            SpriteBundle {
+                transform: Transform::from_xyz(random_x, random_y, 0.0),
+                texture: asset_server.load("sprites/meteorBrown_big1.png"),
+                ..default()
+            },
+            Asteroid {
+                // Generate a random direction for the asteroid
+                direction: Vec2::new(random::<f32>(), random::<f32>()).normalize(),
+            },
+        ));
     }
 }
