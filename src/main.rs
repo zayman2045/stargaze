@@ -1,4 +1,6 @@
-use bevy::{prelude::*, window::PrimaryWindow};
+use bevy::prelude::*;
+use bevy::app::AppExit;
+use bevy::window::PrimaryWindow;
 use rand::prelude::*;
 
 pub const PLAYER_SIZE: f32 = 100.0;
@@ -27,13 +29,14 @@ fn main() {
         .add_system(update_asteroid_direction)
         .add_system(confine_asteroid_movement)
         .add_system(asteroid_hit_player)
-        .add_system(asteroid_hit_asteroid)
+        //.add_system(asteroid_hit_asteroid)
         .add_system(player_collect_star)
         .add_system(update_score)
         .add_system(tick_star_spwan_timer)
         .add_system(spawn_stars_over_time)
         .add_system(tick_asteroid_spwan_timer)
         .add_system(spawn_asteroids_over_time)
+        .add_system(exit_game)
         .run()
 }
 
@@ -446,5 +449,14 @@ pub fn spawn_asteroids_over_time(
                 direction: Vec2::new(random::<f32>(), random::<f32>()).normalize(),
             },
         ));
+    }
+}
+
+pub fn exit_game(
+    keyboard_input: Res<Input<KeyCode>>,
+    mut app_exit_event_writer: EventWriter<AppExit>,
+) {
+    if keyboard_input.just_pressed(KeyCode::Escape) {
+        app_exit_event_writer.send(AppExit);
     }
 }
