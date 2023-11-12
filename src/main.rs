@@ -7,6 +7,7 @@ pub const NUMBER_OF_ASTEROIDS: usize = 4;
 pub const ASTEROID_SIZE: f32 = 100.0;
 pub const ASTEROID_SPEED: f32 = 200.0;
 pub const NUMBER_OF_STARS: usize = 10;
+pub const STAR_SIZE: f32 = 30.0;
 
 fn main() {
     App::new()
@@ -322,7 +323,7 @@ pub fn player_collect_star(
                 .translation
                 .distance(star_transform.translation);
             let player_radius = PLAYER_SIZE / 2.0;
-            let star_radius = ASTEROID_SIZE / 2.0;
+            let star_radius = STAR_SIZE / 2.0;
             if distance < player_radius + star_radius {
                 println!("Player Collected Star!");
                 let sound_effect = asset_server.load("audio/confirmation_001.ogg");
