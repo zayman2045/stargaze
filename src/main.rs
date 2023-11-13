@@ -1,5 +1,5 @@
-use bevy::prelude::*;
 use bevy::app::AppExit;
+use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 use rand::prelude::*;
 
@@ -19,6 +19,8 @@ fn main() {
         .init_resource::<Score>()
         .init_resource::<StarSpawnTimer>()
         .init_resource::<AsteroidSpawnTimer>()
+        .init_resource::<HighScore>()
+        .add_event::<GameOver>()
         .add_startup_system(spawn_camera)
         .add_startup_system(spawn_player)
         .add_startup_system(spawn_asteroids)
@@ -37,6 +39,9 @@ fn main() {
         .add_system(tick_asteroid_spwan_timer)
         .add_system(spawn_asteroids_over_time)
         .add_system(exit_game)
+        .add_system(handle_game_over)
+        .add_system(update_high_scores)
+        .add_system(high_scores_updated)
         .run()
 }
 
@@ -59,6 +64,17 @@ pub struct Score {
 impl Default for Score {
     fn default() -> Score {
         Score { value: 0 }
+    }
+}
+
+#[derive(Resource, Debug)]
+pub struct HighScore {
+    pub scores: Vec<(String, u32)>,
+}
+
+impl Default for HighScore {
+    fn default() -> HighScore {
+        HighScore { scores: Vec::new() }
     }
 }
 
@@ -86,6 +102,10 @@ impl Default for AsteroidSpawnTimer {
             timer: Timer::from_seconds(ASTEROID_SPAWN_TIME, TimerMode::Repeating),
         }
     }
+}
+
+pub struct GameOver {
+    pub score: u32,
 }
 
 // Spawn the player sprite in the middle of the screen
@@ -317,10 +337,12 @@ pub fn confine_asteroid_movement(
 // Destroy the player if it collides with an asteroid
 pub fn asteroid_hit_player(
     mut commands: Commands,
+    mut game_over_event_writer: EventWriter<GameOver>,
     player_query: Query<(Entity, &Transform), With<Player>>,
     asteroid_query: Query<&Transform, With<Asteroid>>,
     asset_server: Res<AssetServer>,
     audio: Res<Audio>,
+    score: Res<Score>,
 ) {
     if let Ok((player_entity, player_transform)) = player_query.get_single() {
         for asteroid_transform in asteroid_query.iter() {
@@ -334,6 +356,7 @@ pub fn asteroid_hit_player(
                 let sound_effect = asset_server.load("audio/explosionCrunch_000.ogg");
                 audio.play(sound_effect);
                 commands.entity(player_entity).despawn();
+                game_over_event_writer.send(GameOver { score: score.value });
             }
         }
     }
@@ -420,7 +443,10 @@ pub fn spawn_stars_over_time(
     }
 }
 
-pub fn tick_asteroid_spwan_timer(mut asteroid_spawn_timer: ResMut<AsteroidSpawnTimer>, time: Res<Time>) {
+pub fn tick_asteroid_spwan_timer(
+    mut asteroid_spawn_timer: ResMut<AsteroidSpawnTimer>,
+    time: Res<Time>,
+) {
     asteroid_spawn_timer.timer.tick(time.delta());
 }
 
@@ -458,5 +484,28 @@ pub fn exit_game(
 ) {
     if keyboard_input.just_pressed(KeyCode::Escape) {
         app_exit_event_writer.send(AppExit);
+    }
+}
+
+pub fn handle_game_over(mut game_over_event_reader: EventReader<GameOver>) {
+    for game_over in game_over_event_reader.iter() {
+        println!("Game Over! Final Score: {}", game_over.score);
+    }
+}
+
+pub fn update_high_scores(
+    mut game_over_event_reader: EventReader<GameOver>,
+    mut high_score: ResMut<HighScore>,
+) {
+    for game_over in game_over_event_reader.iter() {
+        high_score
+            .scores
+            .push(("Player".to_string(), game_over.score));
+    }
+}
+
+pub fn high_scores_updated(high_scores: Res<HighScore>) {
+    if high_scores.is_changed() {
+        println!("High Scores: {:?}", high_scores);
     }
 }
