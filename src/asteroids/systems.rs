@@ -142,7 +142,7 @@ pub fn _asteroid_hit_asteroid(mut asteroid_query: Query<(&Transform, &mut Astero
     }
 }
 
-pub fn tick_asteroid_spwan_timer(
+pub fn tick_asteroid_spawn_timer(
     mut asteroid_spawn_timer: ResMut<AsteroidSpawnTimer>,
     time: Res<Time>,
 ) {

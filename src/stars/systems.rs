@@ -30,7 +30,7 @@ pub fn spawn_stars(
     }
 }
 
-pub fn tick_star_spwan_timer(mut star_spawn_timer: ResMut<StarSpawnTimer>, time: Res<Time>) {
+pub fn tick_star_spawn_timer(mut star_spawn_timer: ResMut<StarSpawnTimer>, time: Res<Time>) {
     star_spawn_timer.timer.tick(time.delta());
 }
 
