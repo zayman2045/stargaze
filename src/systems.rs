@@ -36,7 +36,7 @@ pub fn transition_to_main_menu_state(
     if keyboard_input.just_pressed(KeyCode::M) {
         if app_state.0 != AppState::MainMenu {
             commands.insert_resource(NextState(Some(AppState::MainMenu)));
-            // commands.insert_resource(NextState(Some(SimulationState::Paused)));
+            commands.insert_resource(NextState(Some(SimulationState::Paused)));
             println!("Entered AppState::MainMenu.");
         }
     }
@@ -53,8 +53,9 @@ pub fn exit_game(
 }
 
 // Print the final score when the game ends
-pub fn handle_game_over(mut game_over_event_reader: EventReader<GameOver>) {
+pub fn handle_game_over(mut commands: Commands, mut game_over_event_reader: EventReader<GameOver>) {
     for game_over in game_over_event_reader.iter() {
         println!("Game Over! Final Score: {}", game_over.score);
+        commands.insert_resource(NextState(Some(AppState::GameOver)));
     }
 }
