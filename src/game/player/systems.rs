@@ -1,12 +1,12 @@
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 use super::components::Player;
-use crate::GameOver;
-use crate::score::resources::Score;
-use crate::asteroids::components::Asteroid;
-use crate::asteroids::systems::ASTEROID_SIZE;
-use crate::stars::components::Star;
-use crate::stars::systems::STAR_SIZE;
+use crate::events::GameOver;
+use crate::game::score::resources::Score;
+use crate::game::asteroids::components::Asteroid;
+use crate::game::asteroids::systems::ASTEROID_SIZE;
+use crate::game::stars::components::Star;
+use crate::game::stars::systems::STAR_SIZE;
 
 pub const PLAYER_SIZE: f32 = 100.0;
 pub const PLAYER_SPEED: f32 = 500.0;

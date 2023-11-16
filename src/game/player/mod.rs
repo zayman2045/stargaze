@@ -14,6 +14,5 @@ impl Plugin for PlayerPlugin {
             .add_system(confine_player_movement.after(player_movement))
             .add_system(asteroid_hit_player)
             .add_system(player_collect_star);
-
     }
 }
