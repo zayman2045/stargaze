@@ -23,17 +23,13 @@ impl Plugin for PlayerPlugin {
             // On Enter Game State
             .add_system(spawn_player.in_schedule(OnEnter(AppState::Game)))
             // Systems
-            .add_system(
-                player_movement
-                    .in_set(MovementSystemSet)
-                    .run_if(in_state(AppState::Game))
-                    .run_if(in_state(SimulationState::Running)),
-            )
-            .add_system(
-                confine_player_movement
-                    .in_set(ConfinementSystemSet)
-                    .run_if(in_state(AppState::Game))
-                    .run_if(in_state(SimulationState::Running)),
+            .add_systems(
+                (
+                    player_movement.in_set(MovementSystemSet),
+                    confine_player_movement.in_set(ConfinementSystemSet)
+                )
+                .in_set(OnUpdate(AppState::Game))
+                .in_set(OnUpdate(SimulationState::Running))
             )
             .add_systems(
                 (asteroid_hit_player, player_collect_star)

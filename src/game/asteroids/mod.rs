@@ -11,6 +11,15 @@ use crate::AppState;
 
 use super::SimulationState;
 
+#[derive(SystemSet, Debug, Clone, Hash, PartialEq, Eq)]
+pub struct MovementSystemSet;
+
+#[derive(SystemSet, Debug, Clone, Hash, PartialEq, Eq)]
+pub struct DirectionSystemSet;
+
+#[derive(SystemSet, Debug, Clone, Hash, PartialEq, Eq)]
+pub struct ConfinementSystemSet;
+
 pub struct AsteroidsPlugin;
 
 impl Plugin for AsteroidsPlugin {
@@ -18,14 +27,17 @@ impl Plugin for AsteroidsPlugin {
         app
             // Resources
             .init_resource::<AsteroidSpawnTimer>()
+            // Configure System Sets
+            .configure_set(MovementSystemSet.before(DirectionSystemSet))
+            .configure_set(DirectionSystemSet.before(ConfinementSystemSet))
             // On Enter Game State
             .add_system(spawn_asteroids.in_schedule(OnEnter(AppState::Game)))
             // Systems
             .add_systems(
                 (
-                    asteroid_movement,
-                    update_asteroid_direction,
-                    confine_asteroid_movement,
+                    asteroid_movement.in_set(MovementSystemSet),
+                    update_asteroid_direction.in_set(DirectionSystemSet),
+                    confine_asteroid_movement.in_set(ConfinementSystemSet),
                     tick_asteroid_spawn_timer,
                     spawn_asteroids_over_time,
                 )

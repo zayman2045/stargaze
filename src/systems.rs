@@ -1,5 +1,6 @@
 use crate::events::GameOver;
 use crate::AppState;
+use crate::game::SimulationState;
 use bevy::app::AppExit;
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
@@ -29,12 +30,14 @@ pub fn transition_to_game_state(
 
 pub fn transition_to_main_menu_state(
     mut next_app_state: ResMut<NextState<AppState>>,
+    mut next_simulation_state: ResMut<NextState<SimulationState>>,
     keyboard_input: Res<Input<KeyCode>>,
     app_state: Res<State<AppState>>,
 ) {
     if keyboard_input.just_pressed(KeyCode::M) {
         if app_state.0 != AppState::MainMenu {
             next_app_state.set(AppState::MainMenu);
+            next_simulation_state.set(SimulationState::Paused);
             println!("Entered AppState::MainMenu.");
         }
     }
