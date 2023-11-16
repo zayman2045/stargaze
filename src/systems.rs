@@ -1,6 +1,5 @@
 use crate::events::GameOver;
 use crate::AppState;
-use crate::game::SimulationState;
 use bevy::app::AppExit;
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
@@ -16,27 +15,26 @@ pub fn spawn_camera(mut commands: Commands, window_query: Query<&Window, With<Pr
 }
 
 pub fn transition_to_game_state(
-    mut commands: Commands,
     keyboard_input: Res<Input<KeyCode>>,
     app_state: Res<State<AppState>>,
+    mut next_app_state: ResMut<NextState<AppState>>,
 ) {
     if keyboard_input.just_pressed(KeyCode::G) {
         if app_state.0 != AppState::Game {
-            commands.insert_resource(NextState(Some(AppState::Game)));
+            next_app_state.set(AppState::Game);
             println!("Entered AppState::Game.");
         }
     }
 }
 
 pub fn transition_to_main_menu_state(
-    mut commands: Commands,
+    mut next_app_state: ResMut<NextState<AppState>>,
     keyboard_input: Res<Input<KeyCode>>,
     app_state: Res<State<AppState>>,
 ) {
     if keyboard_input.just_pressed(KeyCode::M) {
         if app_state.0 != AppState::MainMenu {
-            commands.insert_resource(NextState(Some(AppState::MainMenu)));
-            commands.insert_resource(NextState(Some(SimulationState::Paused)));
+            next_app_state.set(AppState::MainMenu);
             println!("Entered AppState::MainMenu.");
         }
     }
@@ -53,9 +51,9 @@ pub fn exit_game(
 }
 
 // Print the final score when the game ends
-pub fn handle_game_over(mut commands: Commands, mut game_over_event_reader: EventReader<GameOver>) {
+pub fn handle_game_over(mut next_app_state: ResMut<NextState<AppState>>, mut game_over_event_reader: EventReader<GameOver>) {
     for game_over in game_over_event_reader.iter() {
         println!("Game Over! Final Score: {}", game_over.score);
-        commands.insert_resource(NextState(Some(AppState::GameOver)));
+        next_app_state.set(AppState::GameOver)
     }
 }
