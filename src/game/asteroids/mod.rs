@@ -18,9 +18,7 @@ impl Plugin for AsteroidsPlugin {
         app
             // Resources
             .init_resource::<AsteroidSpawnTimer>()
-            // Startup Systems
-            // .add_startup_system(spawn_asteroids)
-            // Enter State Systems
+            // On Enter Game State
             .add_system(spawn_asteroids.in_schedule(OnEnter(AppState::Game)))
             // Systems
             .add_systems(
@@ -34,7 +32,7 @@ impl Plugin for AsteroidsPlugin {
                 .in_set(OnUpdate(AppState::Game))
                 .in_set(OnUpdate(SimulationState::Running)),
             )
-            // Exit State Systems
+            // On Exit Game State
             .add_system(despawn_asteroids.in_schedule(OnExit(AppState::Game)));
     }
 }
