@@ -3,6 +3,10 @@ pub mod systems;
 use bevy::prelude::*;
 use systems::*;
 
+use crate::AppState;
+
+use super::SimulationState;
+
 #[derive(SystemSet, Debug, Clone, Hash, PartialEq, Eq)]
 pub struct MovementSystemSet;
 
@@ -16,12 +20,27 @@ impl Plugin for PlayerPlugin {
         app
             // Configure System Sets
             .configure_set(MovementSystemSet.before(ConfinementSystemSet))
-            // Startup Systems
-            .add_startup_system(spawn_player)
+            // On Enter Game State
+            .add_system(spawn_player.in_schedule(OnEnter(AppState::Game)))
             // Systems
-            .add_system(player_movement.in_set(MovementSystemSet))
-            .add_system(confine_player_movement.in_set(ConfinementSystemSet))
-            .add_system(asteroid_hit_player)
-            .add_system(player_collect_star);
+            .add_system(
+                player_movement
+                    .in_set(MovementSystemSet)
+                    .run_if(in_state(AppState::Game))
+                    .run_if(in_state(SimulationState::Running)),
+            )
+            .add_system(
+                confine_player_movement
+                    .in_set(ConfinementSystemSet)
+                    .run_if(in_state(AppState::Game))
+                    .run_if(in_state(SimulationState::Running)),
+            )
+            .add_systems(
+                (asteroid_hit_player, player_collect_star)
+                    .in_set(OnUpdate(AppState::Game))
+                    .in_set(OnUpdate(SimulationState::Running)),
+            )
+            // On Exit Game State
+            .add_system(despawn_player.in_schedule(OnExit(AppState::Game)));
     }
 }
