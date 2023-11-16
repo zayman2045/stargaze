@@ -2,6 +2,18 @@ use bevy::prelude::*;
 
 use super::SimulationState;
 
+pub fn pause_simulation(
+    mut next_simulation_state: ResMut<NextState<SimulationState>>
+) {
+    next_simulation_state.set(SimulationState::Paused);
+}
+
+pub fn resume_simulation(
+    mut next_simulation_state: ResMut<NextState<SimulationState>>
+) {
+    next_simulation_state.set(SimulationState::Running);
+}
+
 // This system will toggle the simulation state between running and paused when the space bar is pressed.
 pub fn toggle_simulation(
     mut next_simulation_state: ResMut<NextState<SimulationState>>,
