@@ -121,6 +121,7 @@ pub fn asteroid_hit_player(
     }
 }
 
+// Despawn the star and increment the score if the player collides with it
 pub fn player_collect_star(
     mut commands: Commands,
     player_query: Query<&Transform, With<Player>>,

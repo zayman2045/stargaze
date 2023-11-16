@@ -36,6 +36,12 @@ pub fn spawn_asteroids(
     }
 }
 
+pub fn despawn_asteroids(mut commands: Commands, asteroid_query: Query<Entity, With<Asteroid>>) {
+    for asteroid_entity in asteroid_query.iter() {
+        commands.entity(asteroid_entity).despawn();
+    }
+}
+
 // Move the asteroids based on their direction
 pub fn asteroid_movement(mut asteroid_query: Query<(&mut Transform, &Asteroid)>, time: Res<Time>) {
     for (mut asteroid_transform, asteroid) in asteroid_query.iter_mut() {
