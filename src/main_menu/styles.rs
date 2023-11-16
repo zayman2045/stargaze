@@ -1,5 +1,9 @@
 use bevy::prelude::*;
 
+pub const NORMAL_BUTTON_COLOR: Color = Color::rgb(0.15, 0.15, 0.15);
+pub const HOVERED_BUTTON_COLOR: Color = Color::rgb(0.25, 0.25, 0.25);
+pub const CLICKED_BUTTON_COLOR: Color = Color::rgb(0.35, 0.75, 0.35);
+
 pub const MAIN_MENU_STYLE: Style = Style {
     flex_direction: FlexDirection::Column,
     justify_content: JustifyContent::Center,
@@ -9,12 +13,11 @@ pub const MAIN_MENU_STYLE: Style = Style {
     ..Style::DEFAULT
 };
 
-pub const NORMAL_BUTTON_COLOR: Color = Color::rgb(0.15, 0.15, 0.15);
-
-pub const BUTTON_STYLE: Style = Style {
+pub const TITLE_STYLE: Style = Style {
+    flex_direction: FlexDirection::Row,
     justify_content: JustifyContent::Center,
     align_items: AlignItems::Center,
-    size: Size::new(Val::Px(200.0), Val::Px(80.0)),
+    size: Size::new(Val::Px(300.0), Val::Px(120.0)),
     ..Style::DEFAULT
 };
 
@@ -24,11 +27,10 @@ pub const IMAGE_STYLE: Style = Style {
     ..Style::DEFAULT
 };
 
-pub const TITLE_STYLE: Style = Style {
-    flex_direction: FlexDirection::Row,
+pub const BUTTON_STYLE: Style = Style {
     justify_content: JustifyContent::Center,
     align_items: AlignItems::Center,
-    size: Size::new(Val::Px(300.0), Val::Px(120.0)),
+    size: Size::new(Val::Px(200.0), Val::Px(80.0)),
     ..Style::DEFAULT
 };
 
