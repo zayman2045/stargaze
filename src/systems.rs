@@ -1,6 +1,6 @@
 use crate::events::GameOver;
-use crate::AppState;
 use crate::game::SimulationState;
+use crate::AppState;
 use bevy::app::AppExit;
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
@@ -15,6 +15,7 @@ pub fn spawn_camera(mut commands: Commands, window_query: Query<&Window, With<Pr
     });
 }
 
+// Enter Game state when the 'G' key is pressed
 pub fn transition_to_game_state(
     keyboard_input: Res<Input<KeyCode>>,
     app_state: Res<State<AppState>>,
@@ -28,6 +29,7 @@ pub fn transition_to_game_state(
     }
 }
 
+// Enter MainMenu state when the 'M' key is pressed
 pub fn transition_to_main_menu_state(
     mut next_app_state: ResMut<NextState<AppState>>,
     mut next_simulation_state: ResMut<NextState<SimulationState>>,
@@ -43,7 +45,7 @@ pub fn transition_to_main_menu_state(
     }
 }
 
-// Exit the game when the escape key is pressed
+// Exit the game when the "Escape" key is pressed
 pub fn exit_game(
     keyboard_input: Res<Input<KeyCode>>,
     mut app_exit_event_writer: EventWriter<AppExit>,
@@ -54,7 +56,10 @@ pub fn exit_game(
 }
 
 // Print the final score when the game ends
-pub fn handle_game_over(mut next_app_state: ResMut<NextState<AppState>>, mut game_over_event_reader: EventReader<GameOver>) {
+pub fn handle_game_over(
+    mut next_app_state: ResMut<NextState<AppState>>,
+    mut game_over_event_reader: EventReader<GameOver>,
+) {
     for game_over in game_over_event_reader.iter() {
         println!("Game Over! Final Score: {}", game_over.score);
         next_app_state.set(AppState::GameOver)

@@ -7,8 +7,8 @@ pub mod systems;
 use resources::*;
 use systems::*;
 
-use crate::AppState;
 use super::SimulationState;
+use crate::AppState;
 
 pub struct StarsPlugin;
 
@@ -17,15 +17,15 @@ impl Plugin for StarsPlugin {
         app
             // Resources
             .init_resource::<StarSpawnTimer>()
-            // On Enter Game State
+            // OnEnter Game State
             .add_system(spawn_stars.in_schedule(OnEnter(AppState::Game)))
-            // Systems
+            // In-game Systems
             .add_systems(
                 (tick_star_spawn_timer, spawn_stars_over_time)
                     .in_set(OnUpdate(AppState::Game))
                     .in_set(OnUpdate(SimulationState::Running)),
             )
-            // On Exit Game State
+            // OnExit Game State
             .add_system(despawn_stars.in_schedule(OnExit(AppState::Game)));
     }
 }

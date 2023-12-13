@@ -1,14 +1,11 @@
-use bevy::prelude::*;
-
 pub mod components;
 pub mod resources;
 pub mod systems;
 
+use bevy::prelude::*;
 use resources::*;
 use systems::*;
-
 use crate::AppState;
-
 use super::SimulationState;
 
 #[derive(SystemSet, Debug, Clone, Hash, PartialEq, Eq)]
@@ -30,9 +27,9 @@ impl Plugin for AsteroidsPlugin {
             // Configure System Sets
             .configure_set(MovementSystemSet.before(DirectionSystemSet))
             .configure_set(DirectionSystemSet.before(ConfinementSystemSet))
-            // On Enter Game State
+            // OnEnter Game State
             .add_system(spawn_asteroids.in_schedule(OnEnter(AppState::Game)))
-            // Systems
+            // In-game Systems
             .add_systems(
                 (
                     asteroid_movement.in_set(MovementSystemSet),
@@ -44,7 +41,7 @@ impl Plugin for AsteroidsPlugin {
                 .in_set(OnUpdate(AppState::Game))
                 .in_set(OnUpdate(SimulationState::Running)),
             )
-            // On Exit Game State
+            // OnExit Game State
             .add_system(despawn_asteroids.in_schedule(OnExit(AppState::Game)));
     }
 }

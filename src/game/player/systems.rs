@@ -30,6 +30,7 @@ pub fn spawn_player(
     ));
 }
 
+// Despawn the player
 pub fn despawn_player(mut commands: Commands, player_query: Query<Entity, With<Player>>) {
     if let Ok(player_entity) = player_query.get_single() {
         commands.entity(player_entity).despawn()
@@ -99,7 +100,7 @@ pub fn confine_player_movement(
     }
 }
 
-// Destroy the player if it collides with an asteroid
+// Destroy the player if it collides with an asteroid and send the GameOver event
 pub fn asteroid_hit_player(
     mut commands: Commands,
     mut game_over_event_writer: EventWriter<GameOver>,

@@ -8,6 +8,7 @@ use crate::{
     AppState,
 };
 
+// Hover and click logic for the main menu play button
 pub fn interact_with_play_button(
     mut button_query: Query<
         (&Interaction, &mut BackgroundColor),
@@ -27,6 +28,7 @@ pub fn interact_with_play_button(
     }
 }
 
+// Hover and click logic for the main menu quit button
 pub fn interact_with_quit_button(
     mut button_query: Query<
         (&Interaction, &mut BackgroundColor),

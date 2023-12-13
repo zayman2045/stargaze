@@ -36,6 +36,7 @@ pub fn spawn_asteroids(
     }
 }
 
+// Despawn all asteroids
 pub fn despawn_asteroids(mut commands: Commands, asteroid_query: Query<Entity, With<Asteroid>>) {
     for asteroid_entity in asteroid_query.iter() {
         commands.entity(asteroid_entity).despawn();
@@ -148,6 +149,7 @@ pub fn _asteroid_hit_asteroid(mut asteroid_query: Query<(&Transform, &mut Astero
     }
 }
 
+// Tick the AsteroidSpawnTimer
 pub fn tick_asteroid_spawn_timer(
     mut asteroid_spawn_timer: ResMut<AsteroidSpawnTimer>,
     time: Res<Time>,
@@ -155,7 +157,7 @@ pub fn tick_asteroid_spawn_timer(
     asteroid_spawn_timer.timer.tick(time.delta());
 }
 
-// Spawn an asteroid if the timer has finished
+// Spawn an asteroid if the AsteroidSpawnTimer has finished
 pub fn spawn_asteroids_over_time(
     mut commands: Commands,
     asteroid_spawn_timer: Res<AsteroidSpawnTimer>,

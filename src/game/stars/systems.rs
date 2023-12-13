@@ -8,6 +8,7 @@ use super::resources::StarSpawnTimer;
 pub const NUMBER_OF_STARS: usize = 10;
 pub const STAR_SIZE: f32 = 30.0;
 
+// Spawn initial set of stars 
 pub fn spawn_stars(
     mut commands: Commands,
     window_query: Query<&Window, With<PrimaryWindow>>,
@@ -30,12 +31,14 @@ pub fn spawn_stars(
     }
 }
 
+// Despawn all stars
 pub fn despawn_stars(mut commands: Commands, star_query: Query<Entity, With<Star>>) {
     for star_entity in star_query.iter() {
         commands.entity(star_entity).despawn();
     }
 }
 
+// Tick the StarSpawnTimer
 pub fn tick_star_spawn_timer(mut star_spawn_timer: ResMut<StarSpawnTimer>, time: Res<Time>) {
     star_spawn_timer.timer.tick(time.delta());
 }

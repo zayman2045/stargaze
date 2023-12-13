@@ -26,6 +26,7 @@ fn main() {
         .run()
 }
 
+// States that the application can exist in
 #[derive(States, Debug, Clone, Copy, Hash, PartialEq, Eq, Default)]
 pub enum AppState {
     #[default]
