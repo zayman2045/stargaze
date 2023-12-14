@@ -2,6 +2,7 @@ mod events;
 mod game;
 mod main_menu;
 mod systems;
+mod game_over;
 
 use bevy::prelude::*;
 use game::GamePlugin;

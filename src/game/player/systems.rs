@@ -106,11 +106,12 @@ pub fn asteroid_hit_player(
     mut game_over_event_writer: EventWriter<GameOver>,
     player_query: Query<(Entity, &Transform), With<Player>>,
     asteroid_query: Query<&Transform, With<Asteroid>>,
-    // music_query: Query<&AudioSink, With<DespawnSound>>,
     asset_server: Res<AssetServer>,
     score: Res<Score>,
 ) {
     if let Ok((player_entity, player_transform)) = player_query.get_single() {
+
+        // Check all asteroids for collisions
         for asteroid_transform in asteroid_query.iter() {
             let distance = player_transform
                 .translation
@@ -119,6 +120,8 @@ pub fn asteroid_hit_player(
             let asteroid_radius = ASTEROID_SIZE / 2.0;
             if distance < player_radius + asteroid_radius {
                 println!("Player Destroyed!");
+
+                // Play despawn sound
                 commands.spawn((
                     AudioBundle {
                         source: asset_server.load("audio/explosionCrunch_000.ogg"),
@@ -126,6 +129,7 @@ pub fn asteroid_hit_player(
                     },
                     DespawnSound,
                 ));
+
                 commands.entity(player_entity).despawn();
                 game_over_event_writer.send(GameOver { score: score.value });
             }
@@ -142,6 +146,8 @@ pub fn player_collect_star(
     mut score: ResMut<Score>,
 ) {
     if let Ok(player_transform) = player_query.get_single() {
+
+        // Check all stars for collisions
         for (star_entity, star_transform) in star_query.iter() {
             let distance = player_transform
                 .translation
@@ -151,6 +157,8 @@ pub fn player_collect_star(
             if distance < player_radius + star_radius {
                 println!("Player Collected Star!");
                 score.value += 1;
+
+                // Play star sound
                 commands.spawn((
                     AudioBundle {
                         source: asset_server.load("audio/confirmation_001.ogg"),
