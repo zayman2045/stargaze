@@ -1,12 +1,12 @@
-use bevy::prelude::*;
-use bevy::window::PrimaryWindow;
-use super::components::Player;
+use super::components::{DespawnSound, Player, StarSound};
 use crate::events::GameOver;
-use crate::game::score::resources::Score;
 use crate::game::asteroids::components::Asteroid;
 use crate::game::asteroids::systems::ASTEROID_SIZE;
+use crate::game::score::resources::Score;
 use crate::game::stars::components::Star;
 use crate::game::stars::systems::STAR_SIZE;
+use bevy::prelude::*;
+use bevy::window::PrimaryWindow;
 
 pub const PLAYER_SIZE: f32 = 100.0;
 pub const PLAYER_SPEED: f32 = 500.0;
@@ -106,8 +106,8 @@ pub fn asteroid_hit_player(
     mut game_over_event_writer: EventWriter<GameOver>,
     player_query: Query<(Entity, &Transform), With<Player>>,
     asteroid_query: Query<&Transform, With<Asteroid>>,
+    // music_query: Query<&AudioSink, With<DespawnSound>>,
     asset_server: Res<AssetServer>,
-    audio: Res<Audio>,
     score: Res<Score>,
 ) {
     if let Ok((player_entity, player_transform)) = player_query.get_single() {
@@ -119,8 +119,13 @@ pub fn asteroid_hit_player(
             let asteroid_radius = ASTEROID_SIZE / 2.0;
             if distance < player_radius + asteroid_radius {
                 println!("Player Destroyed!");
-                let sound_effect = asset_server.load("audio/explosionCrunch_000.ogg");
-                audio.play(sound_effect);
+                commands.spawn((
+                    AudioBundle {
+                        source: asset_server.load("audio/explosionCrunch_000.ogg"),
+                        settings: PlaybackSettings::ONCE,
+                    },
+                    DespawnSound,
+                ));
                 commands.entity(player_entity).despawn();
                 game_over_event_writer.send(GameOver { score: score.value });
             }
@@ -134,7 +139,6 @@ pub fn player_collect_star(
     player_query: Query<&Transform, With<Player>>,
     star_query: Query<(Entity, &Transform), With<Star>>,
     asset_server: Res<AssetServer>,
-    audio: Res<Audio>,
     mut score: ResMut<Score>,
 ) {
     if let Ok(player_transform) = player_query.get_single() {
@@ -147,8 +151,13 @@ pub fn player_collect_star(
             if distance < player_radius + star_radius {
                 println!("Player Collected Star!");
                 score.value += 1;
-                let sound_effect = asset_server.load("audio/confirmation_001.ogg");
-                audio.play(sound_effect);
+                commands.spawn((
+                    AudioBundle {
+                        source: asset_server.load("audio/confirmation_001.ogg"),
+                        settings: PlaybackSettings::ONCE,
+                    },
+                    StarSound,
+                ));
                 commands.entity(star_entity).despawn();
             }
         }

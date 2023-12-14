@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 use rand::prelude::*;
-use super::components::Asteroid;
+use super::components::{Asteroid, AsteroidSound};
 use super::resources::AsteroidSpawnTimer;
 
 pub const NUMBER_OF_ASTEROIDS: usize = 4;
@@ -53,9 +53,10 @@ pub fn asteroid_movement(mut asteroid_query: Query<(&mut Transform, &Asteroid)>,
 
 // Reverse the direction of the asteroid if it hits the edge of the screen
 pub fn update_asteroid_direction(
+    mut commands: Commands,
     mut asteroid_query: Query<(&Transform, &mut Asteroid)>,
     window_query: Query<&Window, With<PrimaryWindow>>,
-    audio: Res<Audio>,
+    // music_query: Query<&AudioSink, With<AsteroidSound>>,
     asset_server: Res<AssetServer>,
 ) {
     let window = window_query.get_single().unwrap();
@@ -82,16 +83,13 @@ pub fn update_asteroid_direction(
 
         // Play a sound when the asteroid changes direction
         if direction_changed {
-            let sound_effect_1 = asset_server.load("audio/impactSoft_heavy_000.ogg");
-            let sound_effect_2 = asset_server.load("audio/impactSoft_heavy_001.ogg");
-
-            let sound_effect = if random::<f32>() > 0.5 {
-                sound_effect_1
-            } else {
-                sound_effect_2
-            };
-
-            audio.play(sound_effect);
+            commands.spawn((
+                AudioBundle {
+                    source: asset_server.load("audio/impactSoft_heavy_000.ogg"),
+                    settings: PlaybackSettings::ONCE,
+                },
+                AsteroidSound,
+            ));
         }
     }
 }
@@ -184,3 +182,7 @@ pub fn spawn_asteroids_over_time(
         ));
     }
 }
+
+// fn play_asteroid_sound(mut commands: Commands, asset_server: Res<AssetServer>) {
+    
+// }

@@ -19,6 +19,7 @@ pub fn build_main_menu(commands: &mut Commands, asset_server: &Res<AssetServer>)
     let main_menu_entity = commands
         .spawn((
             NodeBundle {
+                background_color: BackgroundColor(Color::BLACK),
                 style: MAIN_MENU_STYLE,
                 ..default()
             },

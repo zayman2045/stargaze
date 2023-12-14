@@ -16,13 +16,13 @@ pub fn spawn_camera(mut commands: Commands, window_query: Query<&Window, With<Pr
 }
 
 // Enter Game state when the 'G' key is pressed
-pub fn transition_to_game_state(
+pub fn enter_game_state(
     keyboard_input: Res<Input<KeyCode>>,
     app_state: Res<State<AppState>>,
     mut next_app_state: ResMut<NextState<AppState>>,
 ) {
     if keyboard_input.just_pressed(KeyCode::G) {
-        if app_state.0 != AppState::Game {
+        if State::get(&app_state).ne(&AppState::Game) {
             next_app_state.set(AppState::Game);
             println!("Entered AppState::Game.");
         }
@@ -30,14 +30,14 @@ pub fn transition_to_game_state(
 }
 
 // Enter MainMenu state when the 'M' key is pressed
-pub fn transition_to_main_menu_state(
+pub fn enter_main_menu_state(
     mut next_app_state: ResMut<NextState<AppState>>,
     mut next_simulation_state: ResMut<NextState<SimulationState>>,
     keyboard_input: Res<Input<KeyCode>>,
     app_state: Res<State<AppState>>,
 ) {
     if keyboard_input.just_pressed(KeyCode::M) {
-        if app_state.0 != AppState::MainMenu {
+        if State::get(&app_state).ne(&AppState::MainMenu) {
             next_app_state.set(AppState::MainMenu);
             next_simulation_state.set(SimulationState::Paused);
             println!("Entered AppState::MainMenu.");

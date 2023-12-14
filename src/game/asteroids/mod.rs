@@ -2,11 +2,11 @@ pub mod components;
 pub mod resources;
 pub mod systems;
 
+use super::SimulationState;
+use crate::AppState;
 use bevy::prelude::*;
 use resources::*;
 use systems::*;
-use crate::AppState;
-use super::SimulationState;
 
 #[derive(SystemSet, Debug, Clone, Hash, PartialEq, Eq)]
 pub struct MovementSystemSet;
@@ -21,16 +21,14 @@ pub struct AsteroidsPlugin;
 
 impl Plugin for AsteroidsPlugin {
     fn build(&self, app: &mut App) {
-        app
-            // Resources
-            .init_resource::<AsteroidSpawnTimer>()
-            // Configure System Sets
-            .configure_set(MovementSystemSet.before(DirectionSystemSet))
-            .configure_set(DirectionSystemSet.before(ConfinementSystemSet))
-            // OnEnter Game State
-            .add_system(spawn_asteroids.in_schedule(OnEnter(AppState::Game)))
+        app.init_resource::<AsteroidSpawnTimer>()
+            .configure_set(Update, MovementSystemSet.before(DirectionSystemSet))
+            .configure_set(Update, DirectionSystemSet.before(ConfinementSystemSet))
+            .add_systems(OnEnter(AppState::Game), spawn_asteroids)
+            .add_systems(OnExit(AppState::Game), despawn_asteroids)
             // In-game Systems
             .add_systems(
+                Update,
                 (
                     asteroid_movement.in_set(MovementSystemSet),
                     update_asteroid_direction.in_set(DirectionSystemSet),
@@ -38,10 +36,8 @@ impl Plugin for AsteroidsPlugin {
                     tick_asteroid_spawn_timer,
                     spawn_asteroids_over_time,
                 )
-                .in_set(OnUpdate(AppState::Game))
-                .in_set(OnUpdate(SimulationState::Running)),
-            )
-            // OnExit Game State
-            .add_system(despawn_asteroids.in_schedule(OnExit(AppState::Game)));
+                    .run_if(in_state(AppState::Game).and_then(in_state(SimulationState::Running))),
+            );
+        // OnExit Game State
     }
 }
