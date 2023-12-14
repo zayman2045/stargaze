@@ -1,4 +1,6 @@
-// Event representing the end of a game, containing the final score
+use bevy::ecs::event::Event;
+
+#[derive(Event)]
 pub struct GameOver {
     pub score: u32,
 }
