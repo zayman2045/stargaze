@@ -1,29 +1,18 @@
 use bevy::prelude::*;
 
-use crate::main_menu::{components::*, styles::*};
+use crate::main_menu::components::*;
+use crate::styles::*;
 
 // Spawn the main menu
 pub fn spawn_main_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let _main_menu_entity = build_main_menu(&mut commands, &asset_server);
-}
-
-// Despawn the main menu
-pub fn despawn_main_menu(mut commands: Commands, main_menu_query: Query<Entity, With<MainMenu>>) {
-    if let Ok(main_menu_entity) = main_menu_query.get_single() {
-        commands.entity(main_menu_entity).despawn_recursive();
-    }
-}
-
-// Build the main menu
-pub fn build_main_menu(commands: &mut Commands, asset_server: &Res<AssetServer>) -> Entity {
-    let main_menu_entity = commands
+    let _main_menu_entity = commands
         .spawn((
             NodeBundle {
                 background_color: BackgroundColor(Color::BLACK),
                 style: MAIN_MENU_STYLE,
                 ..default()
             },
-            MainMenu {},
+            MainMenu,
         ))
         .with_children(|parent| {
             // ==== Title ===
@@ -66,7 +55,7 @@ pub fn build_main_menu(commands: &mut Commands, asset_server: &Res<AssetServer>)
                         background_color: NORMAL_BUTTON_COLOR.into(),
                         ..default()
                     },
-                    PlayButton {},
+                    PlayButton,
                 ))
                 .with_children(|parent| {
                     parent.spawn(TextBundle {
@@ -89,7 +78,7 @@ pub fn build_main_menu(commands: &mut Commands, asset_server: &Res<AssetServer>)
                         background_color: NORMAL_BUTTON_COLOR.into(),
                         ..default()
                     },
-                    QuitButton {},
+                    QuitButton,
                 ))
                 .with_children(|parent| {
                     parent.spawn(TextBundle {
@@ -107,5 +96,11 @@ pub fn build_main_menu(commands: &mut Commands, asset_server: &Res<AssetServer>)
         })
         .id();
 
-    main_menu_entity
+}
+
+// Despawn the main menu
+pub fn despawn_main_menu(mut commands: Commands, menu_query: Query<Entity, With<MainMenu>>) {
+    if let Ok(menu_entity) = menu_query.get_single() {
+        commands.entity(menu_entity).despawn_recursive();
+    }
 }

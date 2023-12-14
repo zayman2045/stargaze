@@ -4,7 +4,6 @@ use systems::interactions::*;
 use systems::layout::*;
 
 mod components;
-mod styles;
 mod systems;
 
 pub struct MainMenuPlugin;

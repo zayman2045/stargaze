@@ -1,10 +1,8 @@
-use bevy::{prelude::*, app::AppExit};
+use bevy::{app::AppExit, prelude::*};
 
 use crate::{
-    main_menu::{
-        components::*,
-        styles::{CLICKED_BUTTON_COLOR, HOVERED_BUTTON_COLOR, NORMAL_BUTTON_COLOR},
-    },
+    main_menu::components::*,
+    styles::{CLICKED_BUTTON_COLOR, HOVERED_BUTTON_COLOR, NORMAL_BUTTON_COLOR},
     AppState,
 };
 
@@ -34,14 +32,14 @@ pub fn interact_with_quit_button(
         (&Interaction, &mut BackgroundColor),
         (Changed<Interaction>, With<QuitButton>),
     >,
-    mut app_exit_event_writer: EventWriter<AppExit>
+    mut app_exit_event_writer: EventWriter<AppExit>,
 ) {
     if let Ok((interaction, mut background_color)) = button_query.get_single_mut() {
         match *interaction {
             Interaction::Pressed => {
                 *background_color = CLICKED_BUTTON_COLOR.into();
                 app_exit_event_writer.send(AppExit);
-            },
+            }
             Interaction::Hovered => *background_color = HOVERED_BUTTON_COLOR.into(),
             Interaction::None => *background_color = NORMAL_BUTTON_COLOR.into(),
         }

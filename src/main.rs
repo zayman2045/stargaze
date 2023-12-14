@@ -1,18 +1,20 @@
 mod events;
 mod game;
-mod main_menu;
-mod systems;
 mod game_over;
+mod main_menu;
+mod styles;
+mod systems;
 
 use bevy::prelude::*;
 use game::GamePlugin;
+use game_over::GameOverPlugin;
 use main_menu::MainMenuPlugin;
 use systems::*;
 
 fn main() {
     App::new()
         .add_state::<AppState>()
-        .add_plugins((DefaultPlugins, GamePlugin, MainMenuPlugin))
+        .add_plugins((DefaultPlugins, GamePlugin, MainMenuPlugin, GameOverPlugin))
         .add_systems(Startup, spawn_camera)
         .add_systems(
             Update,
