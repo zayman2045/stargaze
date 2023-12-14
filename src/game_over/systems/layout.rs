@@ -1,8 +1,17 @@
 use bevy::prelude::*;
 
-use crate::{game_over::components::*, styles::*};
+use crate::{game_over::components::*, styles::*, game::score::resources::HighScore};
 
-pub fn spawn_game_over_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
+// Spawn the game over menu
+pub fn spawn_game_over_menu(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    high_scores: Res<HighScore>,
+) {
+    // Get the final score
+   let final_score = high_scores.scores.last().unwrap().1;
+
+    // Build and spawn the game over menu
     commands
         .spawn((
             NodeBundle {
@@ -33,6 +42,18 @@ pub fn spawn_game_over_menu(mut commands: Commands, asset_server: Res<AssetServe
                         ..default()
                     });
                 });
+            // === Final Score ===
+            parent.spawn(TextBundle {
+                text: Text {
+                    sections: vec![TextSection::new(
+                        format!("Final Score: {}", final_score),
+                        get_title_text_style(&asset_server),
+                    )],
+                    alignment: TextAlignment::Center,
+                    ..default()
+                },
+                ..default()
+            });
             // ==== Play Again Button ===
             parent
                 .spawn((
