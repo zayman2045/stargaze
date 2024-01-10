@@ -8,4 +8,4 @@ Stargaze showcases the power and simplicity of the data-driven Bevy game engine,
 
 ## Getting Started
 
-To run this project locally:
+### To run this project locally:
