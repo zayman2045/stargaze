@@ -1,12 +1,18 @@
+//! This module contains the game over logic for the Stargaze game.
+//!
+//! The `GameOverPlugin` struct is the entry point for the game over logic.
+
 use crate::states::AppState;
 use bevy::prelude::*;
 use systems::interactions::*;
 use systems::layout::*;
 
-mod components;
-mod styles;
-mod systems;
+pub mod components;
+pub mod systems;
 
+/// The primary plugin for the game over state in the Stargaze game.
+///
+/// This plugin adds the necessary systems for interacting with the game over menu to the Bevy app.
 pub struct GameOverPlugin;
 
 impl Plugin for GameOverPlugin {

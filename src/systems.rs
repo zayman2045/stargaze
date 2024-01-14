@@ -1,3 +1,5 @@
+//! This module contains the systems used in the game.
+
 use crate::events::GameOver;
 use crate::game::SimulationState;
 use crate::states::AppState;
@@ -5,7 +7,7 @@ use bevy::app::AppExit;
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 
-// Spawn the camera in the middle of the screen
+/// Spawns the camera in the middle of the screen.
 pub fn spawn_camera(mut commands: Commands, window_query: Query<&Window, With<PrimaryWindow>>) {
     let window = window_query.get_single().unwrap();
 
@@ -15,7 +17,7 @@ pub fn spawn_camera(mut commands: Commands, window_query: Query<&Window, With<Pr
     });
 }
 
-// Enter Game state when the 'G' key is pressed
+/// Enters the Game state when the 'G' key is pressed.
 pub fn enter_game_state(
     keyboard_input: Res<Input<KeyCode>>,
     app_state: Res<State<AppState>>,
@@ -29,7 +31,7 @@ pub fn enter_game_state(
     }
 }
 
-// Enter MainMenu state when the 'M' key is pressed
+/// Enters the MainMenu state when the 'M' key is pressed.
 pub fn enter_main_menu_state(
     mut next_app_state: ResMut<NextState<AppState>>,
     mut next_simulation_state: ResMut<NextState<SimulationState>>,
@@ -45,7 +47,7 @@ pub fn enter_main_menu_state(
     }
 }
 
-// Exit the game when the "Escape" key is pressed
+/// Exits the game when the "Escape" key is pressed.
 pub fn exit_game(
     keyboard_input: Res<Input<KeyCode>>,
     mut app_exit_event_writer: EventWriter<AppExit>,
@@ -55,7 +57,7 @@ pub fn exit_game(
     }
 }
 
-// Print the final score when the game ends
+/// Prints the final score when the game ends.
 pub fn handle_game_over(
     mut next_app_state: ResMut<NextState<AppState>>,
     mut game_over_event_reader: EventReader<GameOver>,

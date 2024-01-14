@@ -9,7 +9,7 @@ pub fn spawn_main_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
         .spawn((
             NodeBundle {
                 background_color: BackgroundColor(Color::BLACK),
-                style: MAIN_MENU_STYLE,
+                style: MENU_STYLE,
                 ..default()
             },
             MainMenu,
@@ -95,7 +95,6 @@ pub fn spawn_main_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
                 });
         })
         .id();
-
 }
 
 // Despawn the main menu

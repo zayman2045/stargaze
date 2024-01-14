@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{game_over::components::*, styles::*, game::score::resources::HighScore};
+use crate::{game::score::resources::HighScore, game_over::components::*, styles::*};
 
 // Spawn the game over menu
 pub fn spawn_game_over_menu(
@@ -9,14 +9,18 @@ pub fn spawn_game_over_menu(
     high_scores: Res<HighScore>,
 ) {
     // Get the final score
-   let final_score = high_scores.scores.last().unwrap_or(&("Player 1".to_string(), 0)).1;
+    let final_score = high_scores
+        .scores
+        .last()
+        .unwrap_or(&("Player 1".to_string(), 0))
+        .1;
 
     // Build and spawn the game over menu
     commands
         .spawn((
             NodeBundle {
                 background_color: BackgroundColor(Color::BLACK),
-                style: MAIN_MENU_STYLE,
+                style: MENU_STYLE,
                 ..default()
             },
             GameOverMenu,

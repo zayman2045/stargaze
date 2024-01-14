@@ -1,10 +1,18 @@
+//! This module contains common styles used in the Stargaze game.
+
 use bevy::prelude::*;
 
+/// The normal color of a button.
 pub const NORMAL_BUTTON_COLOR: Color = Color::rgb(0.15, 0.15, 0.15);
+
+/// The color of a button when it is hovered over.
 pub const HOVERED_BUTTON_COLOR: Color = Color::rgb(0.25, 0.25, 0.25);
+
+/// The color of a button when it is pressed.
 pub const PRESSED_BUTTON_COLOR: Color = Color::rgb(0.35, 0.75, 0.35);
 
-pub const MAIN_MENU_STYLE: Style = {
+/// The style for the main menu.
+pub const MENU_STYLE: Style = {
     let mut style = Style::DEFAULT;
     style.display = Display::Flex;
     style.flex_direction = FlexDirection::Column;
@@ -17,6 +25,7 @@ pub const MAIN_MENU_STYLE: Style = {
     style
 };
 
+/// The style for the title.
 pub const TITLE_STYLE: Style = {
     let mut style = Style::DEFAULT;
     style.display = Display::Flex;
@@ -29,15 +38,16 @@ pub const TITLE_STYLE: Style = {
     style
 };
 
+/// The style for the image.
 pub const IMAGE_STYLE: Style = {
     let mut style = Style::DEFAULT;
     style.display = Display::Flex;
     style.width = Val::Percent(15.0);
     style.height = Val::Percent(45.0);
-    // style.margin = UiRect::new(Val::Px(8.0), Val::Px(8.0), Val::Px(8.0), Val::Px(8.0));
     style
 };
 
+/// The style for the button.
 pub const BUTTON_STYLE: Style = {
     let mut style = Style::DEFAULT;
     style.display = Display::Flex;
@@ -48,6 +58,7 @@ pub const BUTTON_STYLE: Style = {
     style
 };
 
+/// Returns the text style for a button.
 pub fn get_button_text_style(asset_server: &Res<AssetServer>) -> TextStyle {
     TextStyle {
         font: asset_server.load("fonts/FiraSans-Bold.ttf"),
@@ -56,6 +67,7 @@ pub fn get_button_text_style(asset_server: &Res<AssetServer>) -> TextStyle {
     }
 }
 
+/// Returns the text style for a title.
 pub fn get_title_text_style(asset_server: &Res<AssetServer>) -> TextStyle {
     TextStyle {
         font: asset_server.load("fonts/FiraSans-Bold.ttf"),

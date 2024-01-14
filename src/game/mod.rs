@@ -1,8 +1,14 @@
+//! This module contains the gameplay logic for the Stargaze game.
+//!
+//! The `GamePlugin` struct is the entry point for the gameplay logic.
+//!
+//! The `SimulationState` enum represents the possible states of the game simulation: running or paused.
+
 pub mod asteroids;
 pub mod player;
 pub mod score;
 pub mod stars;
-mod systems;
+pub mod systems;
 
 use crate::{events::GameOver, AppState};
 use asteroids::AsteroidsPlugin;
@@ -12,6 +18,9 @@ use score::ScorePlugin;
 use stars::StarsPlugin;
 use systems::*;
 
+/// The primary plugin for gameplay within the Stargaze game.
+///
+/// This plugin adds the necessary states, events, plugins, and systems to the Bevy app.
 pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
@@ -25,9 +34,12 @@ impl Plugin for GamePlugin {
     }
 }
 
+/// The possible states of the game simulation.
 #[derive(States, Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
 pub enum SimulationState {
+    /// The game simulation is currently running.
     #[default]
     Running,
+    /// The game simulation is currently paused.
     Paused,
 }

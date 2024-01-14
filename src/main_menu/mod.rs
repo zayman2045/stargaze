@@ -1,11 +1,18 @@
+//! This module contains the main menu logic for the Stargaze game.
+//!
+//! The `MainMenuPlugin` struct is the entry point for the main menu logic.
+
 use crate::states::AppState;
 use bevy::prelude::*;
 use systems::interactions::*;
 use systems::layout::*;
 
-mod components;
-mod systems;
+pub mod components;
+pub mod systems;
 
+/// The primary plugin for the main menu state in the Stargaze game.
+///
+/// This plugin adds the necessary systems for interacting with the main menu to the Bevy app.
 pub struct MainMenuPlugin;
 
 impl Plugin for MainMenuPlugin {

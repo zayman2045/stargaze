@@ -2,23 +2,14 @@
 //!
 //! This module contains the primary game logic and sets up the game environment,
 //! including the initialization of various game states, systems, and plugins.
-//!
-//! The game is structured into several modules:
-//! - `events`: Handles the game's events.
-//! - `game`: Contains the main game logic.
-//! - `game_over`: Handles the game over state.
-//! - `main_menu`: Handles the main menu state.
-//! - `states`: Defines the game's core states.
-//! - `styles`: Contains the game's styles.
-//! - `systems`: Contains the game's core systems.
 
-mod events;
-mod game;
-mod game_over;
-mod main_menu;
-mod states;
-mod styles;
-mod systems;
+pub mod events;
+pub mod game;
+pub mod game_over;
+pub mod main_menu;
+pub mod states;
+pub mod styles;
+pub mod systems;
 
 use bevy::prelude::*;
 use game::GamePlugin;
