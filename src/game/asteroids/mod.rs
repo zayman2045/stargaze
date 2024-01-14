@@ -1,3 +1,7 @@
+//! This module contains the logic for the asteroids in the game.
+//! 
+//! The `AsteroidsPlugin` struct is the entry point for the asteroids logic.
+
 pub mod components;
 pub mod resources;
 pub mod systems;
@@ -8,15 +12,21 @@ use bevy::prelude::*;
 use resources::*;
 use systems::*;
 
+/// Represents a set of systems that handle the movement of asteroids.
 #[derive(SystemSet, Debug, Clone, Hash, PartialEq, Eq)]
 pub struct MovementSystemSet;
 
+/// Represents a set of systems that handle the direction of asteroids.
 #[derive(SystemSet, Debug, Clone, Hash, PartialEq, Eq)]
 pub struct DirectionSystemSet;
 
+/// Represents a set of systems that confine the asteroids within the game area.
 #[derive(SystemSet, Debug, Clone, Hash, PartialEq, Eq)]
 pub struct ConfinementSystemSet;
 
+/// The primary plugin for the asteroids in the game.
+///
+/// This plugin adds the necessary systems for asteroids to be spawned, despawned, and moved.
 pub struct AsteroidsPlugin;
 
 impl Plugin for AsteroidsPlugin {
@@ -26,7 +36,6 @@ impl Plugin for AsteroidsPlugin {
             .configure_set(Update, DirectionSystemSet.before(ConfinementSystemSet))
             .add_systems(OnEnter(AppState::Game), spawn_asteroids)
             .add_systems(OnExit(AppState::Game), despawn_asteroids)
-            // In-game Systems
             .add_systems(
                 Update,
                 (
@@ -38,6 +47,5 @@ impl Plugin for AsteroidsPlugin {
                 )
                     .run_if(in_state(AppState::Game).and_then(in_state(SimulationState::Running))),
             );
-        // OnExit Game State
     }
 }

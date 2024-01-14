@@ -1,18 +1,20 @@
+//! This module contains the systems for controlling the simulation state in the game.
+
 use bevy::prelude::*;
 
 use super::SimulationState;
 
-// Pause the game
+/// Pauses the game simulation.
 pub fn pause_simulation(mut next_simulation_state: ResMut<NextState<SimulationState>>) {
     next_simulation_state.set(SimulationState::Paused);
 }
 
-// Run the game
+/// Resumes the game simulation.
 pub fn resume_simulation(mut next_simulation_state: ResMut<NextState<SimulationState>>) {
     next_simulation_state.set(SimulationState::Running);
 }
 
-// Toggle the SimulationState between running and paused when the "Space" key pressed.
+/// Toggles the SimulationState between running and paused when the "Space" key is pressed.
 pub fn toggle_simulation(
     mut next_simulation_state: ResMut<NextState<SimulationState>>,
     keyboard_input: Res<Input<KeyCode>>,

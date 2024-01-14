@@ -1,4 +1,6 @@
-use bevy::prelude::*;
+//! This module contains the logic for managing the stars in the game.
+//! 
+//! The `StarsPlugin` struct is the entry point for the stars logic.
 
 pub mod components;
 pub mod resources;
@@ -9,7 +11,11 @@ use systems::*;
 
 use super::SimulationState;
 use crate::states::AppState;
+use bevy::prelude::*;
 
+/// The primary plugin for the stars in the game.
+///
+/// This plugin adds the necessary systems for the stars to be spawned, despawned, and updated.
 pub struct StarsPlugin;
 
 impl Plugin for StarsPlugin {

@@ -1,8 +1,6 @@
 //! This module contains the gameplay logic for the Stargaze game.
 //!
 //! The `GamePlugin` struct is the entry point for the gameplay logic.
-//!
-//! The `SimulationState` enum represents the possible states of the game simulation: running or paused.
 
 pub mod asteroids;
 pub mod player;
