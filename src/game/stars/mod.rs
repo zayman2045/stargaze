@@ -8,7 +8,7 @@ use resources::*;
 use systems::*;
 
 use super::SimulationState;
-use crate::AppState;
+use crate::states::AppState;
 
 pub struct StarsPlugin;
 

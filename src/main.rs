@@ -4,11 +4,13 @@ mod game_over;
 mod main_menu;
 mod styles;
 mod systems;
+mod states;
 
 use bevy::prelude::*;
 use game::GamePlugin;
 use game_over::GameOverPlugin;
 use main_menu::MainMenuPlugin;
+use states::AppState;
 use systems::*;
 
 fn main() {
@@ -26,12 +28,4 @@ fn main() {
             ),
         )
         .run()
-}
-
-#[derive(States, Debug, Clone, Copy, Hash, PartialEq, Eq, Default)]
-pub enum AppState {
-    #[default]
-    MainMenu,
-    Game,
-    GameOver,
 }

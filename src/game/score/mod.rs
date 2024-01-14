@@ -1,7 +1,7 @@
 pub mod resources;
 pub mod systems;
 
-use crate::AppState;
+use crate::states::AppState;
 use bevy::prelude::*;
 use resources::*;
 use systems::*;

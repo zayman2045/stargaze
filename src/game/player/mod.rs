@@ -2,7 +2,7 @@ pub mod components;
 pub mod systems;
 
 use super::SimulationState;
-use crate::AppState;
+use crate::states::AppState;
 use bevy::prelude::*;
 use systems::*;
 
@@ -31,7 +31,7 @@ impl Plugin for PlayerPlugin {
             .add_systems(
                 Update,
                 (asteroid_hit_player, player_collect_star)
-                .run_if(in_state(AppState::Game).and_then(in_state(SimulationState::Running))),
+                    .run_if(in_state(AppState::Game).and_then(in_state(SimulationState::Running))),
             );
     }
 }

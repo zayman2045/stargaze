@@ -1,4 +1,4 @@
-use crate::AppState;
+use crate::states::AppState;
 use bevy::prelude::*;
 use systems::interactions::*;
 use systems::layout::*;

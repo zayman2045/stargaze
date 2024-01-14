@@ -3,7 +3,7 @@ pub mod resources;
 pub mod systems;
 
 use super::SimulationState;
-use crate::AppState;
+use crate::states::AppState;
 use bevy::prelude::*;
 use resources::*;
 use systems::*;
