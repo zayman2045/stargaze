@@ -9,7 +9,7 @@ pub fn spawn_game_over_menu(
     high_scores: Res<HighScore>,
 ) {
     // Get the final score
-   let final_score = high_scores.scores.last().unwrap().1;
+   let final_score = high_scores.scores.last().unwrap_or(&("Player 1".to_string(), 0)).1;
 
     // Build and spawn the game over menu
     commands
