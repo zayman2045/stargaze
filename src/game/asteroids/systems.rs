@@ -1,3 +1,5 @@
+//! Contains the systems related to the asteroids in the game.
+
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 use rand::prelude::*;
@@ -8,8 +10,7 @@ pub const NUMBER_OF_ASTEROIDS: usize = 4;
 pub const ASTEROID_SIZE: f32 = 100.0;
 pub const ASTEROID_SPEED: f32 = 200.0;
 
-
-// Spawn the asteroids in random locations
+/// Spawns the asteroids in random locations.
 pub fn spawn_asteroids(
     mut commands: Commands,
     window_query: Query<&Window, With<PrimaryWindow>>,
@@ -36,14 +37,14 @@ pub fn spawn_asteroids(
     }
 }
 
-// Despawn all asteroids
+/// Despawns all of the asteroids.
 pub fn despawn_asteroids(mut commands: Commands, asteroid_query: Query<Entity, With<Asteroid>>) {
     for asteroid_entity in asteroid_query.iter() {
         commands.entity(asteroid_entity).despawn();
     }
 }
 
-// Move the asteroids based on their direction
+/// Moves the asteroids based on their direction.
 pub fn asteroid_movement(mut asteroid_query: Query<(&mut Transform, &Asteroid)>, time: Res<Time>) {
     for (mut asteroid_transform, asteroid) in asteroid_query.iter_mut() {
         let direction = Vec3::new(asteroid.direction.x, asteroid.direction.y, 0.0);
@@ -51,12 +52,11 @@ pub fn asteroid_movement(mut asteroid_query: Query<(&mut Transform, &Asteroid)>,
     }
 }
 
-// Reverse the direction of the asteroid if it hits the edge of the screen
+/// Reverses the direction of an asteroid if it collides with the window edge.
 pub fn update_asteroid_direction(
     mut commands: Commands,
     mut asteroid_query: Query<(&Transform, &mut Asteroid)>,
     window_query: Query<&Window, With<PrimaryWindow>>,
-    // music_query: Query<&AudioSink, With<AsteroidSound>>,
     asset_server: Res<AssetServer>,
 ) {
     let window = window_query.get_single().unwrap();
@@ -94,7 +94,7 @@ pub fn update_asteroid_direction(
     }
 }
 
-// Confine the asteroids to the screen
+/// Confines the asteroids to the window.
 pub fn confine_asteroid_movement(
     mut asteroid_query: Query<&mut Transform, With<Asteroid>>,
     window_query: Query<&Window, With<PrimaryWindow>>,
@@ -126,8 +126,8 @@ pub fn confine_asteroid_movement(
     }
 }
 
-// Reverse the direction of the asteroids if they collide with each other
-pub fn _asteroid_hit_asteroid(mut asteroid_query: Query<(&Transform, &mut Asteroid)>) {
+/// Reverses the direction of an asteroids if it collides with another asteroid.
+fn _asteroid_hit_asteroid(mut asteroid_query: Query<(&Transform, &mut Asteroid)>) {
     let mut combinations = asteroid_query.iter_combinations_mut();
 
     while let Some(
@@ -147,7 +147,7 @@ pub fn _asteroid_hit_asteroid(mut asteroid_query: Query<(&Transform, &mut Astero
     }
 }
 
-// Tick the AsteroidSpawnTimer
+/// Ticks the timer controlling the spawning of asteroids.
 pub fn tick_asteroid_spawn_timer(
     mut asteroid_spawn_timer: ResMut<AsteroidSpawnTimer>,
     time: Res<Time>,
@@ -155,7 +155,7 @@ pub fn tick_asteroid_spawn_timer(
     asteroid_spawn_timer.timer.tick(time.delta());
 }
 
-// Spawn an asteroid if the AsteroidSpawnTimer has finished
+/// Spawns an asteroid if the timer has finished.
 pub fn spawn_asteroids_over_time(
     mut commands: Commands,
     asteroid_spawn_timer: Res<AsteroidSpawnTimer>,
@@ -182,7 +182,3 @@ pub fn spawn_asteroids_over_time(
         ));
     }
 }
-
-// fn play_asteroid_sound(mut commands: Commands, asset_server: Res<AssetServer>) {
-    
-// }

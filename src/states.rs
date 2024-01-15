@@ -1,4 +1,4 @@
-//! This module defines the game states used in the Stargaze game.
+//! Defines the game states used in the Stargaze game.
 
 use bevy::ecs::schedule::States;
 

@@ -1,4 +1,4 @@
-//! This module contains the logic for the player in the game.
+//! Contains the logic for the player in the game.
 //! 
 //! The `PlayerPlugin` struct is the entry point for the player logic.
 

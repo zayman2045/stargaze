@@ -1,3 +1,5 @@
+//! Contains systems related to the stars in the game.
+
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 use rand::random;
@@ -8,7 +10,7 @@ use super::resources::StarSpawnTimer;
 pub const NUMBER_OF_STARS: usize = 10;
 pub const STAR_SIZE: f32 = 30.0;
 
-// Spawn initial set of stars 
+/// Spawns the initial stars in the game.
 pub fn spawn_stars(
     mut commands: Commands,
     window_query: Query<&Window, With<PrimaryWindow>>,
@@ -31,19 +33,19 @@ pub fn spawn_stars(
     }
 }
 
-// Despawn all stars
+/// Despawns all stars in the game.
 pub fn despawn_stars(mut commands: Commands, star_query: Query<Entity, With<Star>>) {
     for star_entity in star_query.iter() {
         commands.entity(star_entity).despawn();
     }
 }
 
-// Tick the StarSpawnTimer
+/// Ticks the star spawn timer.
 pub fn tick_star_spawn_timer(mut star_spawn_timer: ResMut<StarSpawnTimer>, time: Res<Time>) {
     star_spawn_timer.timer.tick(time.delta());
 }
 
-// Spawn a star if the timer has finished
+/// Spawns stars over time.
 pub fn spawn_stars_over_time(
     mut commands: Commands,
     star_spawn_timer: Res<StarSpawnTimer>,

@@ -1,4 +1,4 @@
-//! This module contains the logic for the asteroids in the game.
+//! Contains the logic for the asteroids in the game.
 //! 
 //! The `AsteroidsPlugin` struct is the entry point for the asteroids logic.
 

@@ -1,4 +1,4 @@
-//! This module contains the systems for controlling the simulation state in the game.
+//! Contains the systems for controlling the simulation state in the game.
 
 use bevy::prelude::*;
 

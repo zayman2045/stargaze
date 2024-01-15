@@ -1,6 +1,6 @@
 //! Core functionality for the Stargaze game.
 //!
-//! This module contains the primary game logic and sets up the game environment,
+//! Contains the primary game logic and sets up the game environment,
 //! including the initialization of various game states, systems, and plugins.
 
 pub mod events;

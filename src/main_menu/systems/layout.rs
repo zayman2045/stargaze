@@ -1,9 +1,11 @@
+//! Contains the systems that handle the layout of the main menu.
+
 use bevy::prelude::*;
 
 use crate::main_menu::components::*;
 use crate::styles::*;
 
-// Spawn the main menu
+/// Spawns the main menu.
 pub fn spawn_main_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
     let _main_menu_entity = commands
         .spawn((
@@ -97,7 +99,7 @@ pub fn spawn_main_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
         .id();
 }
 
-// Despawn the main menu
+/// Despawns the main menu.
 pub fn despawn_main_menu(mut commands: Commands, menu_query: Query<Entity, With<MainMenu>>) {
     if let Ok(menu_entity) = menu_query.get_single() {
         commands.entity(menu_entity).despawn_recursive();

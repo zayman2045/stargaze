@@ -1,8 +1,10 @@
+//! Contains the systems that handle the layout of the game over menu.
+
 use bevy::prelude::*;
 
 use crate::{game::score::resources::HighScore, game_over::components::*, styles::*};
 
-// Spawn the game over menu
+/// Spawns the game over menu.
 pub fn spawn_game_over_menu(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
@@ -107,6 +109,7 @@ pub fn spawn_game_over_menu(
         });
 }
 
+/// Despawns the game over menu.
 pub fn despawn_game_over_menu(
     mut commands: Commands,
     menu_query: Query<Entity, With<GameOverMenu>>,

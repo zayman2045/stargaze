@@ -1,5 +1,5 @@
-//! This module contains the logic for managing the score in the game.
-//! 
+//! Contains the logic for managing the score in the game.
+//!
 //! The `ScorePlugin` struct is the entry point for the score logic.
 
 pub mod resources;
@@ -20,13 +20,6 @@ impl Plugin for ScorePlugin {
         app.init_resource::<HighScore>()
             .add_systems(OnEnter(AppState::Game), insert_score)
             .add_systems(OnExit(AppState::Game), remove_score)
-            .add_systems(
-                Update,
-                (
-                    update_high_scores,
-                    high_scores_updated,
-                    update_score.run_if(in_state(AppState::Game)),
-                ),
-            );
+            .add_systems(Update, update_high_scores);
     }
 }

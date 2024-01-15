@@ -1,4 +1,4 @@
-//! This module contains the main menu logic for the Stargaze game.
+//! Contains the main menu logic for the Stargaze game.
 //!
 //! The `MainMenuPlugin` struct is the entry point for the main menu logic.
 

@@ -1,4 +1,4 @@
-//! This module contains common styles used in the Stargaze game.
+//! Contains common styles used in the Stargaze game.
 
 use bevy::prelude::*;
 

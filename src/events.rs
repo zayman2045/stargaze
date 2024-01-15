@@ -1,4 +1,4 @@
-//! This module defines the events used in the Stargaze game.
+//! Defines the events used in the Stargaze game.
 
 use bevy::ecs::event::Event;
 

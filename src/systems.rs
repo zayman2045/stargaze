@@ -1,4 +1,4 @@
-//! This module contains the systems used in the game.
+//! Contains the systems used in the game.
 
 use crate::events::GameOver;
 use crate::game::SimulationState;

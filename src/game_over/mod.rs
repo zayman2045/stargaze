@@ -1,4 +1,4 @@
-//! This module contains the game over logic for the Stargaze game.
+//! Contains the game over logic for the Stargaze game.
 //!
 //! The `GameOverPlugin` struct is the entry point for the game over logic.
 

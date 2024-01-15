@@ -1,3 +1,5 @@
+//! Contains the systems for the player sprite.
+
 use super::components::{DespawnSound, Player, StarSound};
 use crate::events::GameOver;
 use crate::game::asteroids::components::Asteroid;
@@ -8,10 +10,12 @@ use crate::game::stars::systems::STAR_SIZE;
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 
+// The size of the player sprite
 pub const PLAYER_SIZE: f32 = 100.0;
+// The speed of the player sprite
 pub const PLAYER_SPEED: f32 = 500.0;
 
-// Spawn the player sprite in the middle of the screen
+/// Spawns the player sprite in the middle of the screen.
 pub fn spawn_player(
     mut commands: Commands,
     window_query: Query<&Window, With<PrimaryWindow>>,
@@ -30,14 +34,14 @@ pub fn spawn_player(
     ));
 }
 
-// Despawn the player
+/// Despawns the player.
 pub fn despawn_player(mut commands: Commands, player_query: Query<Entity, With<Player>>) {
     if let Ok(player_entity) = player_query.get_single() {
         commands.entity(player_entity).despawn()
     }
 }
 
-// Move the player sprite based on keyboard input
+/// Moves the player sprite based on keyboard input.
 pub fn player_movement(
     keyboard_input: Res<Input<KeyCode>>,
     mut player_query: Query<&mut Transform, With<Player>>,
@@ -68,7 +72,7 @@ pub fn player_movement(
     }
 }
 
-// Confine the player sprite to the screen
+/// Confines the player sprite to the window.
 pub fn confine_player_movement(
     mut player_query: Query<&mut Transform, With<Player>>,
     window_query: Query<&Window, With<PrimaryWindow>>,
@@ -100,7 +104,7 @@ pub fn confine_player_movement(
     }
 }
 
-// Destroy the player if it collides with an asteroid and send the GameOver event
+/// Despawns the player and sends a GameOver event if the player collides with an asteroid.
 pub fn asteroid_hit_player(
     mut commands: Commands,
     mut game_over_event_writer: EventWriter<GameOver>,
@@ -110,7 +114,6 @@ pub fn asteroid_hit_player(
     score: Res<Score>,
 ) {
     if let Ok((player_entity, player_transform)) = player_query.get_single() {
-
         // Check all asteroids for collisions
         for asteroid_transform in asteroid_query.iter() {
             let distance = player_transform
@@ -137,7 +140,7 @@ pub fn asteroid_hit_player(
     }
 }
 
-// Despawn the star and increment the score if the player collides with it
+/// Despawns the star and increment the score if the player collides with it.
 pub fn player_collect_star(
     mut commands: Commands,
     player_query: Query<&Transform, With<Player>>,
@@ -146,7 +149,6 @@ pub fn player_collect_star(
     mut score: ResMut<Score>,
 ) {
     if let Ok(player_transform) = player_query.get_single() {
-
         // Check all stars for collisions
         for (star_entity, star_transform) in star_query.iter() {
             let distance = player_transform

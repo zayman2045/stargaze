@@ -1,3 +1,5 @@
+//! Contains the systems that handle the interactions of the main menu buttons.
+
 use bevy::ui::Interaction;
 use bevy::{app::AppExit, prelude::*};
 
@@ -8,7 +10,7 @@ use crate::{
     AppState,
 };
 
-// Hover and click logic for the game over menu play again button
+/// Changes the app state and ui style when the mouse interacts with the play again button.
 pub fn interact_with_play_again_button(
     mut next_app_state: ResMut<NextState<AppState>>,
     mut button_query: Query<
@@ -28,6 +30,7 @@ pub fn interact_with_play_again_button(
     }
 }
 
+/// Changes the ui style and quits the game when the mouse interacts with the quit button.
 pub fn interact_with_quit_button(
     mut app_exit_event_writer: EventWriter<AppExit>,
     mut button_query: Query<

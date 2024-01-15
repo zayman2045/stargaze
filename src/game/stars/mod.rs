@@ -1,4 +1,4 @@
-//! This module contains the logic for managing the stars in the game.
+//! Contains the logic for managing the stars in the game.
 //! 
 //! The `StarsPlugin` struct is the entry point for the stars logic.
 

@@ -1,3 +1,5 @@
+//! Contains the systems that handle the interactions of the main menu buttons.
+
 use bevy::{app::AppExit, prelude::*};
 
 use crate::{
@@ -6,7 +8,7 @@ use crate::{
     AppState,
 };
 
-// Hover and click logic for the main menu play button
+/// Changes the app state and ui style when the mouse interacts with the play button.
 pub fn interact_with_play_button(
     mut button_query: Query<
         (&Interaction, &mut BackgroundColor),
@@ -26,7 +28,7 @@ pub fn interact_with_play_button(
     }
 }
 
-// Hover and click logic for the main menu quit button
+/// Changes the app state and ui style when the mouse interacts with the quit button.
 pub fn interact_with_quit_button(
     mut button_query: Query<
         (&Interaction, &mut BackgroundColor),
