@@ -5,6 +5,8 @@
         "despawning",
         "Despawns",
         "Fira",
-        "gameplay"
+        "gameplay",
+        "spacebar",
+        "WASD"
     ]
 }
