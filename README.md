@@ -1,6 +1,6 @@
 # Stargaze
 
-Stargaze is a 2D video game built in Rust using the Bevy game engine.
+Stargaze is a 2D video game built in Rust using the Bevy game engine. You play as a spaceship with the goal being to collect as many stars as possible before colliding with an asteroid.
 
 ## Overview
 
