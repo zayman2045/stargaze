@@ -6,7 +6,9 @@ Stargaze is a 2D video game built in Rust using the Bevy game engine. You play a
 
 Stargaze showcases the power and simplicity of the data-driven Bevy game engine, which uses an Entity Component System (ECS) to the map in-game elements and mechanisms to Rust structs and functions. Entities serve as identifiers for individual objects within the game world, and are assigned Components which represent that object's associated data. Systems in Stargaze are Rust functions that control the behavior of entities. They operate on components and can be grouped into sets to control execution scheduling, providing a flexible and efficient mechanism for game logic. 
 
-Stargaze also makes use of Bevy's Events, Resources, and States to further customize the behavior and parameters of it's in-game systems. Events allow systems to communicate with other systems, using either an EventWriter to send messages once an action has taken place, or an EventReader to listen for messages on a specified schedule.
+Stargaze also makes use of Bevy's Events, Resources, and States to further customize the behavior and parameters of it's in-game systems. Events allow systems to communicate with other systems, using either an EventWriter to send messages once an action has taken place, or an EventReader to listen for messages on a specified schedule. The GameOver Event for example, is triggered when the user's sprite collides with an asteroid and is despawned, sending a message to capture and display the user's final score.
+
+
 
 ## Getting Started
 
