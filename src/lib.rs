@@ -34,14 +34,6 @@ pub fn run_game() {
         .add_state::<AppState>()
         .add_plugins((DefaultPlugins, GamePlugin, MainMenuPlugin, GameOverPlugin))
         .add_systems(Startup, spawn_camera)
-        .add_systems(
-            Update,
-            (
-                enter_game_state,
-                enter_main_menu_state,
-                exit_game,
-                handle_game_over,
-            ),
-        )
+        .add_systems(Update, (exit_game, handle_game_over))
         .run()
 }
