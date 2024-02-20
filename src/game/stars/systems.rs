@@ -2,12 +2,13 @@
 
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
-use rand::random;
+use rand::Rng;
 
 use super::components::Star;
 use super::resources::StarSpawnTimer;
 
-pub const NUMBER_OF_STARS: usize = 10;
+pub const INITIAL_NUMBER_OF_STARS: usize = 10;
+pub const ADDITIONAL_STARS_PER_SPAWN: usize = 2;
 pub const STAR_SIZE: f32 = 30.0;
 
 /// Spawns the initial stars in the game.
@@ -17,10 +18,12 @@ pub fn spawn_stars(
     asset_server: Res<AssetServer>,
 ) {
     let window = window_query.get_single().unwrap();
+    let mut rng = rand::thread_rng();
 
-    for _ in 0..NUMBER_OF_STARS {
-        let random_x = random::<f32>() * window.width();
-        let random_y = random::<f32>() * window.height();
+    for _ in 0..INITIAL_NUMBER_OF_STARS {
+        // Generate a random location for the star
+        let random_x = rng.gen_range(0.05 * window.width()..0.95 * window.width());
+        let random_y = rng.gen_range(0.05 * window.height()..0.95 * window.height());
 
         commands.spawn((
             SpriteBundle {
@@ -54,17 +57,21 @@ pub fn spawn_stars_over_time(
 ) {
     if star_spawn_timer.timer.finished() {
         let window = window_query.get_single().unwrap();
+        let mut rng = rand::thread_rng();
 
-        let random_x = random::<f32>() * window.width();
-        let random_y = random::<f32>() * window.height();
+        for _ in 0..ADDITIONAL_STARS_PER_SPAWN {
+            // Generate a random location for the star
+            let random_x = rng.gen_range(0.05 * window.width()..0.95 * window.width());
+            let random_y = rng.gen_range(0.05 * window.height()..0.95 * window.height());
 
-        commands.spawn((
-            SpriteBundle {
-                transform: Transform::from_xyz(random_x, random_y, 0.0),
-                texture: asset_server.load("sprites/star_gold.png"),
-                ..default()
-            },
-            Star {},
-        ));
+            commands.spawn((
+                SpriteBundle {
+                    transform: Transform::from_xyz(random_x, random_y, 0.0),
+                    texture: asset_server.load("sprites/star_gold.png"),
+                    ..default()
+                },
+                Star {},
+            ));
+        }
     }
 }
