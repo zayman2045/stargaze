@@ -26,8 +26,8 @@ impl Plugin for GamePlugin {
         app.add_state::<SimulationState>()
             .add_event::<GameOver>()
             .add_plugins((PlayerPlugin, AsteroidsPlugin, StarsPlugin, ScorePlugin))
-            .add_systems(OnEnter(AppState::Game), pause_simulation)
-            .add_systems(OnExit(AppState::Game), resume_simulation)
+            .add_systems(OnEnter(AppState::Game), resume_simulation)
+            .add_systems(OnExit(AppState::Game), pause_simulation)
             .add_systems(Update, toggle_simulation.run_if(in_state(AppState::Game)));
     }
 }
