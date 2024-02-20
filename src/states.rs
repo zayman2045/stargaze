@@ -2,8 +2,7 @@
 
 use bevy::ecs::schedule::States;
 
-/// The `AppState` enum represents the possible states of the Stargaze game.
-///
+/// The possible states of the Stargaze game.
 #[derive(States, Debug, Clone, Copy, Hash, PartialEq, Eq, Default)]
 pub enum AppState {
     /// The default state, representing the main menu of the game.
