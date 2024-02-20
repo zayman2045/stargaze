@@ -9,8 +9,8 @@ pub fn pause_simulation(mut next_simulation_state: ResMut<NextState<SimulationSt
     next_simulation_state.set(SimulationState::Paused);
 }
 
-/// Resumes the game simulation.
-pub fn resume_simulation(mut next_simulation_state: ResMut<NextState<SimulationState>>) {
+/// Runs the game simulation.
+pub fn run_simulation(mut next_simulation_state: ResMut<NextState<SimulationState>>) {
     next_simulation_state.set(SimulationState::Running);
 }
 
@@ -21,7 +21,7 @@ pub fn toggle_simulation(
     simulation_state: Res<State<SimulationState>>,
 ) {
     if keyboard_input.just_pressed(KeyCode::Space) {
-        if State::get(&simulation_state).eq(&SimulationState::Running){
+        if State::get(&simulation_state).eq(&SimulationState::Running) {
             next_simulation_state.set(SimulationState::Paused);
         }
         if State::get(&simulation_state).eq(&SimulationState::Paused) {
