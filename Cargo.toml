@@ -8,10 +8,10 @@ rand = "0.8.5"
 wasm-bindgen = "0.2.89"
 
 # Uncomment this to enable Bevy in release mode
-bevy = "0.11.0"
+# bevy = "0.11.0"
 
 # Uncomment this to enable dynamic linking for Bevy in debug mode
-# bevy = { version = "0.11.0", features = ["dynamic_linking"] }
+bevy = { version = "0.11.0", features = ["dynamic_linking"] }
 
 # Enable a small amount of optimization in debug mode
 [profile.dev]
