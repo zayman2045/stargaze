@@ -1,6 +1,7 @@
 //! Contains the systems used in the game.
 
 use crate::events::GameOver;
+use crate::game::score::resources::HighScore;
 use crate::states::AppState;
 use bevy::app::AppExit;
 use bevy::prelude::*;
@@ -26,13 +27,17 @@ pub fn exit_game(
     }
 }
 
-/// Prints the final score when the game ends.
+/// Updates the high scores and sets the next app state to GameOver.
 pub fn handle_game_over(
     mut next_app_state: ResMut<NextState<AppState>>,
     mut game_over_event_reader: EventReader<GameOver>,
+    mut high_score: ResMut<HighScore>,
 ) {
     for game_over in game_over_event_reader.iter() {
-        println!("Game Over! Final Score: {}", game_over.score);
+        high_score
+            .scores
+            .push(("Player 1".to_string(), game_over.score));
+
         next_app_state.set(AppState::GameOver)
     }
 }

@@ -19,7 +19,6 @@ impl Plugin for ScorePlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<HighScore>()
             .add_systems(OnEnter(AppState::Game), insert_score)
-            .add_systems(OnExit(AppState::Game), remove_score)
-            .add_systems(Update, update_high_scores);
+            .add_systems(OnExit(AppState::Game), remove_score);
     }
 }
