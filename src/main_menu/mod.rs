@@ -21,7 +21,7 @@ impl Plugin for MainMenuPlugin {
             .add_systems(OnExit(AppState::MainMenu), despawn_main_menu)
             .add_systems(
                 Update,
-                (interact_with_play_button, interact_with_quit_button)
+                interact_with_play_button
                     .run_if(in_state(AppState::MainMenu)),
             );
     }

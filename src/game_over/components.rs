@@ -9,7 +9,3 @@ pub struct GameOverMenu;
 /// Represents the play again button in the game over menu.
 #[derive(Component)]
 pub struct PlayAgainButton;
-
-/// Represents the quit button in the game over menu.
-#[derive(Component)]
-pub struct QuitButton;

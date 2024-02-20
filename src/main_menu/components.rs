@@ -9,7 +9,3 @@ pub struct MainMenu;
 /// Represents the play button in the main menu.
 #[derive(Component)]
 pub struct PlayButton;
-
-/// Represents the quit button in the main menu.
-#[derive(Component)]
-pub struct QuitButton;
