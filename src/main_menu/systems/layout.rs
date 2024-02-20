@@ -95,6 +95,45 @@ pub fn spawn_main_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
                         ..default()
                     });
                 });
+            // ==== Directions Title ===
+            parent.spawn(TextBundle {
+                text: Text {
+                    sections: vec![TextSection::new(
+                        "Directions:",
+                        get_directions_title_text_style(&asset_server),
+                    )],
+                    alignment: TextAlignment::Center,
+                    ..default()
+                },
+                ..default()
+            });
+            // ==== Directions Body ===
+            parent.spawn(TextBundle {
+                text: Text {
+                    sections: vec![
+                        TextSection::new(
+                            "- Use the WASD or arrow keys to move your ship",
+                            get_directions_body_text_style(&asset_server),
+                        )
+                    ],
+                    alignment: TextAlignment::Center,
+                    ..default()
+                },
+                ..default()
+            });
+            parent.spawn(TextBundle {
+                text: Text {
+                    sections: vec![
+                        TextSection::new(
+                            "- Press the spacebar to play and pause the game",
+                            get_directions_body_text_style(&asset_server),
+                        )
+                    ],
+                    alignment: TextAlignment::Center,
+                    ..default()
+                },
+                ..default()
+            });
         })
         .id();
 }

@@ -55,6 +55,12 @@ pub const BUTTON_STYLE: Style = {
     style.align_items = AlignItems::Center;
     style.width = Val::Percent(30.0);
     style.height = Val::Percent(10.0);
+    style.margin = UiRect {
+        left: Val::Percent(0.),
+        right: Val::Percent(0.),
+        top: Val::Percent(0.),
+        bottom: Val::Px(50.),
+    };
     style
 };
 
@@ -72,6 +78,24 @@ pub fn get_title_text_style(asset_server: &Res<AssetServer>) -> TextStyle {
     TextStyle {
         font: asset_server.load("fonts/FiraSans-Bold.ttf"),
         font_size: 64.0,
+        color: Color::WHITE,
+    }
+}
+
+/// Returns the text style for the directions title.
+pub fn get_directions_title_text_style(asset_server: &Res<AssetServer>) -> TextStyle {
+    TextStyle {
+        font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+        font_size: 30.0,
+        color: Color::WHITE,
+    }
+}
+
+/// Returns the text style for the directions body.
+pub fn get_directions_body_text_style(asset_server: &Res<AssetServer>) -> TextStyle {
+    TextStyle {
+        font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+        font_size: 24.0,
         color: Color::WHITE,
     }
 }
