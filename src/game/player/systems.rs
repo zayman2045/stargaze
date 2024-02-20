@@ -122,7 +122,6 @@ pub fn asteroid_hit_player(
             let player_radius = PLAYER_SIZE / 2.0;
             let asteroid_radius = ASTEROID_SIZE / 2.0;
             if distance < player_radius + asteroid_radius {
-                println!("Player Destroyed!");
 
                 // Play despawn sound
                 commands.spawn((
@@ -158,7 +157,6 @@ pub fn player_collect_star(
             let player_radius = PLAYER_SIZE / 2.0;
             let star_radius = STAR_SIZE / 2.0;
             if distance < player_radius + star_radius {
-                println!("Player Collected Star!");
                 score.value += 1;
 
                 // Play star sound
