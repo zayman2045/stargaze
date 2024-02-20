@@ -133,6 +133,7 @@ pub fn asteroid_hit_player(
                     DespawnSound,
                 ));
 
+                // Despawn the player and send a GameOver event
                 commands.entity(player_entity).despawn();
                 game_over_event_writer.send(GameOver { score: score.value });
             }
