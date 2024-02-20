@@ -6,9 +6,11 @@ use rand::prelude::*;
 use super::components::{Asteroid, AsteroidSound};
 use super::resources::AsteroidSpawnTimer;
 
-pub const NUMBER_OF_ASTEROIDS: usize = 4;
 pub const ASTEROID_SIZE: f32 = 100.0;
 pub const ASTEROID_SPEED: f32 = 200.0;
+pub const NUMBER_OF_ASTEROIDS: usize = 4;
+pub const ASTEROID_SPAWN_LOCATION_PERCENTAGES: [(f32, f32); NUMBER_OF_ASTEROIDS] = [(0.1, 0.1), (0.1, 0.9), (0.9, 0.1), (0.9, 0.9)];
+
 
 /// Spawns the asteroids in random locations.
 pub fn spawn_asteroids(
@@ -18,7 +20,9 @@ pub fn spawn_asteroids(
 ) {
     let window = window_query.get_single().unwrap();
     let (window_width, window_height) = (window.width(), window.height());
-    let mut initial_spawn_locations = [(0.1, 0.1), (0.1, 0.9), (0.9, 0.1), (0.9, 0.9)].iter().map(|(x, y)| (x * window_width, y * window_height));
+
+    // Create an iterator over the initial spawn locations multiplied by the window dimensions
+    let mut initial_spawn_locations = ASTEROID_SPAWN_LOCATION_PERCENTAGES.iter().map(|(x, y)| (x * window_width, y * window_height));
 
     for _ in 0..NUMBER_OF_ASTEROIDS {
         let (x, y) = initial_spawn_locations.next().expect("There should be one unique spawn location per asteroid");
@@ -165,9 +169,11 @@ pub fn spawn_asteroids_over_time(
 ) {
     if asteroid_spawn_timer.timer.finished() {
         let window = window_query.get_single().unwrap();
+        let (window_width, window_height) = (window.width(), window.height());
 
-        let random_x = random::<f32>() * window.width();
-        let random_y = random::<f32>() * window.height();
+        // Generate a random spawn location from the list of spawn locations
+        let (x, y) = ASTEROID_SPAWN_LOCATION_PERCENTAGES.choose(&mut rand::thread_rng()).unwrap();
+        let (random_x, random_y) = (x * window_width, y * window_height);
 
         // Create a new entity with the SpriteBundle and Asteroid components
         commands.spawn((
