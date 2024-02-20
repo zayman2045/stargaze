@@ -14,7 +14,7 @@ Stargaze also makes use of Bevy's Events, Resources, and States to further custo
 
 ### Game Instructions
 
-* Use the WASD or arrow keys to move the player around.
+* Use the WASD or arrow keys to move your ship.
 * Press the spacebar to play and pause the game.
 * Press Esc to quit the game.
 
