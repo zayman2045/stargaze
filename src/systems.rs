@@ -77,4 +77,34 @@ mod tests {
         );
     }
 
+    #[test]
+    fn handle_game_over_updates_scores_and_state() {
+        // Setup app
+        let mut app = App::new();
+
+        // Add necessary resources and events
+        app.insert_resource(HighScore::default())
+            .add_state::<AppState>() // Assume starting in a different state
+            .add_event::<GameOver>();
+
+        // Add the handle_game_over system
+        app.add_systems(Update, handle_game_over);
+
+        // Send a GameOver event
+        app.world
+            .resource_mut::<Events<GameOver>>()
+            .send(GameOver { score: 100 });
+
+        // Run systems
+        app.update();
+
+        // Check HighScore was updated
+        let high_scores = app.world.resource::<HighScore>();
+        assert_eq!(high_scores.scores.len(), 1);
+        assert_eq!(high_scores.scores[0], ("Player 1".to_string(), 100));
+
+        // Check AppState is set to GameOver
+        let next_state = app.world.resource::<NextState<AppState>>().0.unwrap();
+        assert_eq!(next_state, AppState::GameOver);
+    }
 }
