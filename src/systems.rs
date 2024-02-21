@@ -41,3 +41,40 @@ pub fn handle_game_over(
         next_app_state.set(AppState::GameOver)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn exit_game_on_escape_press() {
+        // Setup app
+        let mut app = App::new();
+
+        // Add `AppExit` event
+        app.add_event::<AppExit>();
+
+        // Add our exit_game system
+        app.add_systems(Update, exit_game);
+
+        // Setup test resource with "Escape" key just pressed
+        let mut keyboard_input = Input::<KeyCode>::default();
+        keyboard_input.press(KeyCode::Escape);
+        app.insert_resource(keyboard_input);
+
+        // Run systems
+        app.update();
+
+        // Get `AppExit` event reader
+        let app_exit_events = app.world.resource::<Events<AppExit>>();
+        let mut app_exit_reader = app_exit_events.get_reader();
+        let app_exited = app_exit_reader.iter(app_exit_events).next().is_some();
+
+        // Check the event has been sent
+        assert!(
+            app_exited,
+            "AppExit event should be sent when Escape is pressed"
+        );
+    }
+
+}
