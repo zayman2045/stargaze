@@ -17,7 +17,7 @@ pub fn spawn_hud(
         .spawn((
             SpriteBundle {
                 transform: Transform {
-                    translation: Vec3::new(window.width() / 2.0, window.height() / 2.0, 0.0),
+                    translation: Vec3::new(window.width() / 2.0, window.height() / 2.0, -1.0),
                     rotation: Quat::IDENTITY,
                     scale: Vec3::new(1.0, 1.0, 1.0),
                 },
