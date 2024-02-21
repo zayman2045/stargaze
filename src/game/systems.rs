@@ -39,17 +39,22 @@ mod tests {
         // Setup app
         let mut app = App::new();
 
-        // Add SimulationState
+        // Initialize the necessary states and events
         app.add_state::<SimulationState>();
+        *app.world.resource_mut::<State<SimulationState>>() = State::new(SimulationState::Running);
 
-        // Add pause_simulation system
+        // Add systems
         app.add_systems(Update, pause_simulation);
 
         // Run systems
         app.update();
 
         // Check resulting changes
-        let next_state = app.world.resource::<NextState<SimulationState>>().0.unwrap();
+        let next_state = app
+            .world
+            .resource::<NextState<SimulationState>>()
+            .0
+            .unwrap();
         assert_eq!(next_state, SimulationState::Paused);
     }
 
@@ -58,17 +63,88 @@ mod tests {
         // Setup app
         let mut app = App::new();
 
-        // Add SimulationState
+        // Initialize the necessary states and events
         app.add_state::<SimulationState>();
+        *app.world.resource_mut::<State<SimulationState>>() = State::new(SimulationState::Paused);
 
-        // Add pause_simulation system
+        // Add systems
         app.add_systems(Update, run_simulation);
 
         // Run systems
         app.update();
 
         // Check resulting changes
-        let next_state = app.world.resource::<NextState<SimulationState>>().0.unwrap();
+        let next_state = app
+            .world
+            .resource::<NextState<SimulationState>>()
+            .0
+            .unwrap();
         assert_eq!(next_state, SimulationState::Running);
+    }
+
+    #[test]
+    fn toggle_simulation_from_running_to_paused() {
+        // Setup app
+        let mut app = App::new();
+
+        // Initialize the necessary states and events
+        app.add_state::<SimulationState>();
+        *app.world.resource_mut::<State<SimulationState>>() = State::new(SimulationState::Running);
+
+        // Insert keyboard input resource with the "Space" key just pressed
+        let mut keyboard_input = Input::<KeyCode>::default();
+        keyboard_input.press(KeyCode::Space);
+        app.insert_resource(keyboard_input);
+
+        // Add systems
+        app.add_systems(Update, toggle_simulation);
+
+        // Run systems
+        app.update();
+
+        // Check resulting changes
+        let next_state = app
+            .world
+            .resource::<NextState<SimulationState>>()
+            .0
+            .unwrap();
+        assert_eq!(
+            next_state,
+            SimulationState::Paused,
+            "The simulation state should toggle to Paused after pressing Space."
+        );
+    }
+
+    #[test]
+    fn toggle_simulation_from_paused_to_running() {
+        // Setup app
+        let mut app = App::new();
+
+        // Initialize the necessary states and events
+        app.add_state::<SimulationState>();
+        *app.world.resource_mut::<State<SimulationState>>() = State::new(SimulationState::Paused);
+
+        // Insert keyboard input resource with the "Space" key just pressed
+        let mut keyboard_input = Input::<KeyCode>::default();
+        keyboard_input.press(KeyCode::Space);
+        app.insert_resource(keyboard_input);
+
+        // Add systems
+        app.add_systems(Update, toggle_simulation);
+
+        // Run systems
+        app.update();
+
+        // Check resulting changes
+        let next_state = app
+            .world
+            .resource::<NextState<SimulationState>>()
+            .0
+            .unwrap();
+        assert_eq!(
+            next_state,
+            SimulationState::Running,
+            "The simulation state should toggle to Running after pressing Space."
+        );
     }
 }
