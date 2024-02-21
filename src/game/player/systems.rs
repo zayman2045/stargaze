@@ -104,35 +104,6 @@ pub fn confine_player_movement(
     }
 }
 
-/// Rotates the player to follow the mouse.
-// pub fn player_direction(
-//     mut player_query: Query<(&mut Transform, &GlobalTransform), With<Player>>,
-//     mut cursor_moved_events: EventReader<CursorMoved>,
-//     window_query: Query<&Window, With<PrimaryWindow>>,
-// ) {
-//     let window = window_query.get_single().unwrap();
-
-//     for event in cursor_moved_events.iter() {
-//         if let Ok((mut player_transform, player_global_transform)) = player_query.get_single_mut() {
-//             // Convert the cursor position from screen space to world space
-//             let cursor_position = Vec3::new(
-//                 event.position.x - window.width() / 2.0,
-//                 -(event.position.y - window.height() / 2.0), // Invert the y-coordinate
-//                 0.0,
-//             );
-
-//             // Calculate the direction vector from the player to the cursor
-//             let direction = cursor_position - player_global_transform.translation();
-
-//             // Calculate the angle to rotate the player
-//             let angle = direction.y.atan2(direction.x);
-
-//             // Set the player's rotation
-//             player_transform.rotation = Quat::from_rotation_z(-angle);
-//         }
-//     }
-// }
-
 /// Despawns the player and sends a GameOver event if the player collides with an asteroid.
 pub fn asteroid_hit_player(
     mut commands: Commands,
