@@ -51,10 +51,10 @@ mod tests {
         // Setup app
         let mut app = App::new();
 
-        // Add AppExit event
+        // Add necessary events
         app.add_event::<AppExit>();
 
-        // Add exit_game system
+        // Add systems
         app.add_systems(Update, exit_game);
 
         // Setup test resource with Escape key just pressed
@@ -87,7 +87,7 @@ mod tests {
             .add_state::<AppState>()
             .add_event::<GameOver>();
 
-        // Add the handle_game_over system
+        // Add systems
         app.add_systems(Update, handle_game_over);
 
         // Send a GameOver event
