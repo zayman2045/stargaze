@@ -37,7 +37,7 @@ pub fn handle_game_over(
         high_score
             .scores
             .push(("Player 1".to_string(), game_over.score));
-
+        
         next_app_state.set(AppState::GameOver)
     }
 }
@@ -54,7 +54,7 @@ mod tests {
         // Add `AppExit` event
         app.add_event::<AppExit>();
 
-        // Add our exit_game system
+        // Add "exit_game" system
         app.add_systems(Update, exit_game);
 
         // Setup test resource with "Escape" key just pressed
@@ -84,7 +84,7 @@ mod tests {
 
         // Add necessary resources and events
         app.insert_resource(HighScore::default())
-            .add_state::<AppState>() // Assume starting in a different state
+            .add_state::<AppState>()
             .add_event::<GameOver>();
 
         // Add the handle_game_over system
