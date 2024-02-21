@@ -29,3 +29,46 @@ pub fn toggle_simulation(
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn did_simulation_pause() {
+        // Setup app
+        let mut app = App::new();
+
+        // Add SimulationState
+        app.add_state::<SimulationState>();
+
+        // Add pause_simulation system
+        app.add_systems(Update, pause_simulation);
+
+        // Run systems
+        app.update();
+
+        // Check resulting changes
+        let next_state = app.world.resource::<NextState<SimulationState>>().0.unwrap();
+        assert_eq!(next_state, SimulationState::Paused);
+    }
+
+    #[test]
+    fn did_simulation_run() {
+        // Setup app
+        let mut app = App::new();
+
+        // Add SimulationState
+        app.add_state::<SimulationState>();
+
+        // Add pause_simulation system
+        app.add_systems(Update, run_simulation);
+
+        // Run systems
+        app.update();
+
+        // Check resulting changes
+        let next_state = app.world.resource::<NextState<SimulationState>>().0.unwrap();
+        assert_eq!(next_state, SimulationState::Running);
+    }
+}
